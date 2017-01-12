@@ -1,0 +1,28 @@
+- hosts: api
+  vars_files:
+    - secret
+  remote_user: wduss
+
+  tasks:
+
+  - name: Delete old API version
+    file: path=/home/wduss/server state=absent
+
+  - name: Create server directory
+    file: path=/home/wduss/server state=directory
+
+  - name: Upload new build
+    copy:
+      src: ../consume-backend
+      dest: /home/wduss/server/
+    
+  - name: Mark build executable
+    file: path=/home/wduss/server/consume-backend mode=u+rwx
+
+  - name: Switch to updated app version
+    shell: supervisorctl restart consume
+    register: superout
+    become: yes
+    become_user: root
+
+  - debug: msg="{{ superout.stdout }}"

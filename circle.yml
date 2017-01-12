@@ -1,4 +1,8 @@
 dependencies:
+  pre:
+    - pip install ansible
+    - pip install --upgrade setuptools
+    - echo $ANSIBLE_VAULT_PASSWORD > ~/.vault_password.txt
   post:
     - go get -u github.com/golang/lint/golint
 
@@ -8,3 +12,18 @@ test:
     - golint ./...
     - go tool vet .
     - go test -v -race ./...
+
+machine:  
+  python:
+    version: 2.7.10
+
+general:
+  artifacts:
+    - "consume-backend"
+
+deployment:  
+  prod:
+    branch: master
+    commands:
+      - webpack
+      - ansible-playbook deployment/deploy.yml -i deployment/vars --vault-password-file ~/.vault_password.txt
