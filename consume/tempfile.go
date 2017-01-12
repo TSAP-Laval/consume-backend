@@ -1,4 +1,4 @@
-package api
+package consume
 
 // Hello is a temp function that returns the logical NOT
 // of a boolean
