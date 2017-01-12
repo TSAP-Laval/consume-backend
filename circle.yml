@@ -25,5 +25,4 @@ deployment:
   prod:
     branch: master
     commands:
-      - webpack
       - ansible-playbook deployment/deploy.yml -i deployment/vars --vault-password-file ~/.vault_password.txt
