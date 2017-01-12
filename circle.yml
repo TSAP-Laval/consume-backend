@@ -3,6 +3,7 @@ dependencies:
     - pip install ansible
     - pip install --upgrade setuptools
     - echo $ANSIBLE_VAULT_PASSWORD > ~/.vault_password.txt
+    - sudo apt-get update; sudo apt-get install sshpass
   post:
     - go get -u github.com/golang/lint/golint
 
