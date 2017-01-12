@@ -16,8 +16,16 @@ type Message struct {
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	res1D := &Message{
-		Greating: "Bonjour",
+		Greating: "Bonjour!",
 		From:     []string{"Loic", "Ndjoyi"}}
-	res1B, _ := json.Marshal(res1D)
-	fmt.Println(string(res1B))
+	res1B, err := json.Marshal(res1D)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	_, err = w.Write(res1B)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
