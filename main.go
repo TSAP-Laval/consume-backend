@@ -1,15 +1,10 @@
 package main
 
-import (
-	"log"
-	"net/http"
+import "github.com/tsap-laval/consume-backend/consume/api"
 
-	"github.com/TSAP-Laval/consume-backend/consume/api"
-)
+import "os"
 
 func main() {
-
-	router := api.GetRouter()
-
-	log.Fatal(http.ListenAndServe(":8080", router))
+	service := api.New(os.Stdout)
+	service.Start(":8080")
 }

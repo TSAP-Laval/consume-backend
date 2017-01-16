@@ -1,10 +1,12 @@
 package api
 
-import "github.com/gorilla/mux"
+import (
+	"github.com/gorilla/mux"
+	"github.com/tsap-laval/consume-backend/consume/api/handlers"
+)
 
-// GetRouter  Definit les routes de l'app.
-func GetRouter() *mux.Router {
+func getRouter() *mux.Router {
 	r := mux.NewRouter()
-	r.HandleFunc("/", IndexHandler)
+	r.HandleFunc("/api/stats/player/{playerId}", handlers.PlayerStatsHandler)
 	return r
 }
