@@ -1,0 +1,20 @@
+[
+	{
+		"nom": "Passe offensive"
+	},
+    {
+		"nom": "Passe defensive"
+	},
+    {
+		"nom": "Tir au but"
+	},
+	{
+		"nom": "Passe en zone neutre"
+	},
+    {
+		"nom": "BB"
+	},
+    {
+		"nom": "B"
+	}
+]
