@@ -87,6 +87,7 @@ func (c *ConsumeService) getRouter() http.Handler {
 
 	r.HandleFunc("/api/stats/player/{playerID}/team/{teamID}", c.PlayerStatsHandler)
 	r.HandleFunc("/api/seed", c.SeedHandler)
+	r.HandleFunc("/api/stats/match/{matchID}/player/{playerID}", c.PlayerMatchStatsHandler)
 
 	return c.Middleware(r)
 }
