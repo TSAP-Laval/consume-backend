@@ -1,10 +1,36 @@
 package main
 
-import "github.com/tsap-laval/consume-backend/consume/api"
+import (
+	"bufio"
+	"fmt"
+	"os"
 
-import "os"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/tsap-laval/consume-backend/consume/api"
+)
 
 func main() {
-	service := api.New(os.Stdout)
-	service.Start(":8080")
+
+	// On récupère la configuration
+	// de l'environnement & on la passe au service
+	var c api.ConsumeConfiguration
+
+	err := envconfig.Process("TSAP", &c)
+
+	if err != nil {
+		panic(err)
+	}
+
+	service := api.New(os.Stdout, &c)
+	service.Start()
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Press enter to stop server...")
+	reader.ReadString('\n')
+
+	service.Stop()
+
+	if err != nil {
+		panic(err)
+	}
 }
