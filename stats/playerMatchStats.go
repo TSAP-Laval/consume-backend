@@ -15,13 +15,10 @@ type PlayerMatchStats struct {
 func GetPlayerActions(playerID uint, matchID uint, data *common.Datasource) (*PlayerMatchStats, error) {
 
 	// On récupère le joueur
-	player, err := data.GetPlayer(playerID)
+	_, err := data.GetPlayer(playerID)
 
 	if err != nil {
 		return nil, err
-	}
-	if player == nil {
-		return nil, nil
 	}
 	// On récupère le match
 	match, err := data.GetMatch(matchID)
