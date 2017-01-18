@@ -27,3 +27,11 @@ deployment:
     branch: master
     commands:
       - ansible-playbook deployment/deploy.yml -i deployment/vars --vault-password-file ~/.vault_password.txt
+
+machine:
+  environment:
+    TSAP_DATABASEDRIVER: sqlite3
+    TSAP_CONNECTIONSTRING: "test.db"
+    TSAP_SEEDDATAPATH: "seed"
+    TSAP_APIURL: ":8080"
+    TSAP_DEBUG: true
