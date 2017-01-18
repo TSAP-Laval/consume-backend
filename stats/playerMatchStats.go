@@ -7,7 +7,7 @@ import "github.com/TSAP-Laval/common"
 type PlayerMatchStats struct {
 	ID      uint     `json:"match_id"`
 	Date    string   `json:"date"`
-	Actions []action `json:"matches"`
+	Actions []action `json:"actions"`
 }
 
 // GetPlayerActions retourne les actions d'un joueur lors d'un partie
@@ -28,20 +28,20 @@ func GetPlayerActions(playerID uint, matchID uint, data *common.Datasource) (*Pl
 	if err != nil {
 		return nil, err
 	}
-	playerActions := make([]action, 0)
-	for _, act := range match.Actions {
-		if uint(act.JoueurID) == playerID {
+	playerActions := []action{}
+	for i := 0; i < len(match.Actions); i++ {
+		if uint(match.Actions[i].JoueurID) == playerID {
 			playerAction := action{
-				ID:         act.ID,
-				TypeAction: typeAction{Name: act.TypeAction.Nom},
-				IsValid:    act.ActionPositive,
-				X1:         act.X1,
-				Y1:         act.Y1,
-				X2:         act.X2,
-				Y2:         act.Y2,
-				HomeScore:  act.PointageMaison,
-				AdvScore:   act.PointageAdverse,
-				Time:       act.Temps,
+				ID:         match.Actions[i].ID,
+				TypeAction: typeAction{Name: match.Actions[i].TypeAction.Nom},
+				IsValid:    match.Actions[i].ActionPositive,
+				X1:         match.Actions[i].X1,
+				Y1:         match.Actions[i].Y1,
+				X2:         match.Actions[i].X2,
+				Y2:         match.Actions[i].Y2,
+				HomeScore:  match.Actions[i].PointageMaison,
+				AdvScore:   match.Actions[i].PointageAdverse,
+				Time:       match.Actions[i].Temps,
 			}
 			playerActions = append(playerActions, playerAction)
 		}
