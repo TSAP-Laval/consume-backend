@@ -22,7 +22,5 @@
   - name: Switch to updated app version
     shell: supervisorctl restart consume
     register: superout
-    become: yes
-    become_user: root
 
   - debug: msg="{{ superout.stdout }}"
