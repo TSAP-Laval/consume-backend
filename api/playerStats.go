@@ -7,8 +7,8 @@ import (
 
 	"encoding/json"
 
+	"github.com/TSAP-Laval/consume-backend/stats"
 	"github.com/gorilla/mux"
-	"github.com/tsap-laval/consume-backend/stats"
 )
 
 // PlayerStatsHandler handles the request to get player stats

@@ -1,6 +1,6 @@
 package stats
 
-import "github.com/tsap-laval/models"
+import "github.com/TSAP-Laval/models"
 
 func getVJ(player *models.Joueur, match *models.Partie) float64 {
 	var bc, br float64

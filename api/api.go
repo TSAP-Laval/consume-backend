@@ -6,9 +6,9 @@ import (
 
 	"encoding/json"
 
+	"github.com/TSAP-Laval/common"
 	"github.com/braintree/manners"
 	"github.com/gorilla/mux"
-	"github.com/tsap-laval/common"
 )
 
 // ConsumeConfiguration représente les paramètres

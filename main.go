@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/TSAP-Laval/consume-backend/api"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/tsap-laval/consume-backend/api"
 )
 
 func main() {

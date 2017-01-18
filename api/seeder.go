@@ -5,7 +5,7 @@ import (
 
 	"net/http"
 
-	"github.com/tsap-laval/common"
+	"github.com/TSAP-Laval/common"
 )
 
 // SeedHandler gère l'endpoint de seeding

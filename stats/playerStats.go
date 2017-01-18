@@ -1,8 +1,8 @@
 package stats
 
 import (
-	"github.com/tsap-laval/common"
-	"github.com/tsap-laval/models"
+	"github.com/TSAP-Laval/common"
+	"github.com/TSAP-Laval/models"
 )
 
 // PlayerStats représente les statistiques d'un joueur pour
