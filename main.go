@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/tsap-laval/consume-backend/consume/api"
+	"github.com/tsap-laval/consume-backend/api"
 )
 
 func main() {
