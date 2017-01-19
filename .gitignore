@@ -24,3 +24,5 @@ _testmain.go
 
 *.retry
 *.prof
+
+.DS_Store
