@@ -28,6 +28,17 @@ type season struct {
 	Name string `json:"name"`
 }
 
+type playerSeason struct {
+	ID        uint     `json:"id"`
+	FirstName string   `json:"first_name"`
+	LastName  string   `json:"last_name"`
+	Metrics   []metric `json:"metrics"`
+}
+
+type coach struct {
+	ID uint `json:"id"`
+}
+
 type typeAction struct {
 	Name string `json:"name"`
 }
