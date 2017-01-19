@@ -6,6 +6,8 @@ import (
 
 	"encoding/json"
 
+	"net/http"
+
 	"github.com/TSAP-Laval/common"
 	"github.com/braintree/manners"
 	"github.com/gorilla/mux"
@@ -64,14 +66,31 @@ func (c *ConsumeService) ErrorWrite(message string, w io.Writer) error {
 	return err
 }
 
-func (c *ConsumeService) getRouter() *mux.Router {
+// Middleware applique les différents middleware
+func (c *ConsumeService) Middleware(h http.Handler) http.Handler {
+	// Set CORS
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		if c.config.Debug {
+			// On ouvre l'accès de l'API si ce dernier est en debug
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+			w.Header().Set("Access-Control-Allow-Headers",
+				"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		}
+		h.ServeHTTP(w, r)
+	})
+}
+
+func (c *ConsumeService) getRouter() http.Handler {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/api/stats/player/{playerID}/team/{teamID}", c.PlayerStatsHandler)
 	r.HandleFunc("/api/stats/team/{teamID}", c.TeamStatsHandler)
 	r.HandleFunc("/api/seed", c.SeedHandler)
+	r.HandleFunc("/api/stats/match/{matchID}/player/{playerID}", c.PlayerMatchStatsHandler)
 
-	return r
+	return c.Middleware(r)
 }
 
 // Start démarre le service
