@@ -15,6 +15,11 @@
     copy:
       src: ../consume-backend
       dest: /home/wduss/server/
+
+  - name: Upload seed data
+    copy:
+      src: ../seed/
+      dest: /home/wduss/server/seed/
     
   - name: Mark build executable
     file: path=/home/wduss/server/consume-backend mode=u+rwx

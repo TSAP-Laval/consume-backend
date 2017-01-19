@@ -1,15 +1,36 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"bufio"
+	"fmt"
+	"os"
 
-	"github.com/TSAP-Laval/consume-backend/consume/api"
+	"github.com/TSAP-Laval/consume-backend/api"
+	"github.com/kelseyhightower/envconfig"
 )
 
 func main() {
 
-	router := api.GetRouter()
+	// On récupère la configuration
+	// de l'environnement & on la passe au service
+	var c api.ConsumeConfiguration
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	err := envconfig.Process("TSAP", &c)
+
+	if err != nil {
+		panic(err)
+	}
+
+	service := api.New(os.Stdout, &c)
+	service.Start()
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Press enter to stop server...")
+	reader.ReadString('\n')
+
+	service.Stop()
+
+	if err != nil {
+		panic(err)
+	}
 }
