@@ -1,7 +1,6 @@
 package stats
 
 import "github.com/TSAP-Laval/common"
-import "fmt"
 
 // TeamStats représente les statistiques d'une équipe pour
 // une saison.
@@ -39,7 +38,6 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 
 	// On boucle sur tous les joueurs d'une équipe.
 	for i, player := range t.Joueurs {
-		fmt.Println("Porque")
 		// On boucle sur tous les matchs
 		for _, match := range matches {
 
@@ -53,9 +51,9 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 			metric3 += m[2].Value
 		}
 		metric := []metric{
-			metric{Name: "Volume de Jeu", Value: metric1 / nbMatchs, Deviation: 1},
-			metric{Name: "Indice d'efficacité", Value: metric2 / nbMatchs, Deviation: 1},
-			metric{Name: "Score de performance", Value: metric3 / nbMatchs, Deviation: 1},
+			metric{ID: 1, Name: "Volume de Jeu", Value: metric1 / nbMatchs, Deviation: 1},
+			metric{ID: 2, Name: "Indice d'efficacité", Value: metric2 / nbMatchs, Deviation: 1},
+			metric{ID: 3, Name: "Score de performance", Value: metric3 / nbMatchs, Deviation: 1},
 		}
 
 		players[i] = playerSeason{
