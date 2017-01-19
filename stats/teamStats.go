@@ -1,27 +1,20 @@
 package stats
 
 import "github.com/TSAP-Laval/common"
+import "fmt"
 
 // TeamStats représente les statistiques d'une équipe pour
 // une saison.
 type TeamStats struct {
 	ID      uint           `json:"id"`
 	Name    string         `json:"name"`
-	CoachID string         `json:"coach_id"`
 	Players []playerSeason `json:"players"`
 }
 
-// GetTeamStats calcule et retourne les statistiques d'
+// GetTeamStats calcule et retourne les statistiques d'une équipe
 // pour une saison
-func GetTeamStats(coachID uint, teamID uint, seasonID uint, data *common.Datasource) (*TeamStats, error) {
+func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamStats, error) {
 	var err error
-
-	// On récupère le coach.
-	coach, err := data.GetCoach(coachID)
-
-	if err != nil {
-		return nil, err
-	}
 
 	// On récupère l'équipe sélectionnée.
 	t, err := data.GetTeam(teamID)
@@ -29,31 +22,26 @@ func GetTeamStats(coachID uint, teamID uint, seasonID uint, data *common.Datasou
 		return nil, err
 	}
 
-	// On récupère tous les joueurs d'une équipe
-	//selon la saison.
-	players, err := data.GetPlayers(teamID, seasonID)
-
-	if err != nil {
-		return nil, err
-	}
-
 	//On récupère tous les matchs d'une équipe.
-	matches, err := data.GetMatches(playerID, teamID, seasonID)
+	matches, err := data.GetMatches(0, teamID, seasonID)
+
+	var nbMatchs = float64(len(matches))
 
 	if err != nil {
 		return nil, err
 	}
 	// On crée un tableau de la longueur de players
 	//dans lequel on fera notre calcul de stats.
-	teamStats := make([]playerSeason, len(players))
+	players := make([]playerSeason, len(t.Joueurs))
 
 	// Les métrics calculée.
 	var metric1, metric2, metric3 float64
 
 	// On boucle sur tous les joueurs d'une équipe.
-	for i, player := range players {
+	for i, player := range t.Joueurs {
+		fmt.Println("Porque")
 		// On boucle sur tous les matchs
-		for j, match := range matches {
+		for _, match := range matches {
 
 			m := getMetrics(&player, &match)
 			// On fait la somme des metrics:
@@ -65,22 +53,22 @@ func GetTeamStats(coachID uint, teamID uint, seasonID uint, data *common.Datasou
 			metric3 += m[2].Value
 		}
 		metric := []metric{
-			metric{Name: "Volume de Jeu", Value: metric1 / len(matches), Deviation: 1},
-			metric{Name: "Indice d'efficacité", Value: metric2 / len(matches), Deviation: 1},
-			metric{Name: "Score de performance", Value: metric3 / len(matches), Deviation: 1},
+			metric{Name: "Volume de Jeu", Value: metric1 / nbMatchs, Deviation: 1},
+			metric{Name: "Indice d'efficacité", Value: metric2 / nbMatchs, Deviation: 1},
+			metric{Name: "Score de performance", Value: metric3 / nbMatchs, Deviation: 1},
 		}
 
-		players := playerSeason{
-			ID:        playerID,
+		players[i] = playerSeason{
+			ID:        player.ID,
 			FirstName: player.Prenom,
 			LastName:  player.Nom,
 			Metrics:   metric,
 		}
 	}
+
 	teamStats := TeamStats{
 		ID:      teamID,
-		Name:    player.Prenom,
-		CoachID: coachID,
+		Name:    t.Nom,
 		Players: players,
 	}
 

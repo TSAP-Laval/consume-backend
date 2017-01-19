@@ -26,7 +26,7 @@ type season struct {
 
 type playerSeason struct {
 	ID        uint     `json:"id"`
-	FisrtName string   `json:"first_name"`
+	FirstName string   `json:"first_name"`
 	LastName  string   `json:"last_name"`
 	Metrics   []metric `json:"metrics"`
 }
