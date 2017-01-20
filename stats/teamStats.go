@@ -62,6 +62,10 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 			LastName:  player.Nom,
 			Metrics:   metric,
 		}
+		// Remise à zéro des metrics calculés
+		metric1 = 0
+		metric2 = 0
+		metric3 = 0
 	}
 
 	teamStats := TeamStats{
