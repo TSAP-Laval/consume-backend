@@ -22,7 +22,7 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 	}
 
 	//On récupère tous les matchs d'une équipe.
-	matches, err := data.GetMatches(0, teamID, seasonID)
+	matches, err := data.GetMatches(teamID, seasonID)
 
 	var nbMatchs = float64(len(matches))
 

@@ -25,7 +25,7 @@ func main() {
 	service.Start()
 
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Press enter to stop server...")
+	fmt.Println("Press enter to stop server...")
 	reader.ReadString('\n')
 
 	service.Stop()

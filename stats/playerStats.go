@@ -33,7 +33,7 @@ func GetPlayerStats(playerID uint, teamID uint, seasonID uint, data *common.Data
 		return nil, err
 	}
 
-	matches, err := data.GetMatches(playerID, teamID, seasonID)
+	matches, err := data.GetMatches(teamID, seasonID)
 
 	if err != nil {
 		return nil, err
