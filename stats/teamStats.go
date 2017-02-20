@@ -54,7 +54,7 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 		latestMatch, err := data.GetLatestMatch(teamID)
 
 		if err != nil {
-			//Il faudrait afficher une message d'erreur
+			return nil, err
 		}
 
 		latestMetrics := getMetrics(&player, latestMatch)
