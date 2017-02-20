@@ -38,23 +38,59 @@ func (c *ConsumeService) PlayerStatsHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	season, err := c.datasource.GetCurrentSeason()
+	seasonIDRaw := r.URL.Query().Get("season")
 
-	if err != nil {
-		c.Error(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+	var seasonID uint
 
-		if c.config.Debug {
-			errMsg = err.Error()
-		} else {
-			errMsg = "An error occured"
+	if seasonIDRaw != "" {
+		seasonIDu, err := strconv.Atoi(seasonIDRaw)
+
+		if err != nil {
+			c.Error(fmt.Sprintf("Season %s invalid", seasonIDRaw))
+			w.WriteHeader(http.StatusBadRequest)
+			c.ErrorWrite("Season is invalid", w)
+			return
+		}
+		seasonID = uint(seasonIDu)
+
+	} else {
+		season, err := c.datasource.GetCurrentSeason()
+
+		if err != nil {
+			c.Error(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+
+			if c.config.Debug {
+				errMsg = err.Error()
+			} else {
+				errMsg = "An error occured"
+			}
+
+			c.ErrorWrite(errMsg, w)
+			return
 		}
 
-		c.ErrorWrite(errMsg, w)
-		return
+		seasonID = season.ID
 	}
 
-	stats, err := stats.GetPlayerStats(uint(playerID), uint(teamID), season.ID, c.datasource)
+	positionIDRaw := r.URL.Query().Get("position")
+
+	var positionID uint
+
+	if positionIDRaw != "" {
+		positionIDu, err := strconv.Atoi(positionIDRaw)
+
+		if err != nil {
+			c.Error(fmt.Sprintf("Position %s invalid", positionIDRaw))
+			w.WriteHeader(http.StatusBadRequest)
+			c.ErrorWrite("Position is invalid", w)
+			return
+		}
+
+		positionID = uint(positionIDu)
+	}
+
+	stats, err := stats.GetPlayerStats(uint(playerID), uint(teamID), seasonID, positionID, c.datasource)
 
 	if err != nil {
 		c.Error(fmt.Sprintf("Error fetching stats: %s", err))
