@@ -44,7 +44,6 @@ func (c *ConsumeService) PlayerStatsHandler(w http.ResponseWriter, r *http.Reque
 
 	if seasonIDRaw != "" {
 		seasonIDu, err := strconv.Atoi(seasonIDRaw)
-		seasonID = uint(seasonIDu)
 
 		if err != nil {
 			c.Error(fmt.Sprintf("Season %s invalid", seasonIDRaw))
@@ -52,6 +51,7 @@ func (c *ConsumeService) PlayerStatsHandler(w http.ResponseWriter, r *http.Reque
 			c.ErrorWrite("Season is invalid", w)
 			return
 		}
+		seasonID = uint(seasonIDu)
 
 	} else {
 		season, err := c.datasource.GetCurrentSeason()
@@ -73,7 +73,24 @@ func (c *ConsumeService) PlayerStatsHandler(w http.ResponseWriter, r *http.Reque
 		seasonID = season.ID
 	}
 
-	stats, err := stats.GetPlayerStats(uint(playerID), uint(teamID), seasonID, c.datasource)
+	positionIDRaw := r.URL.Query().Get("position")
+
+	var positionID uint
+
+	if positionIDRaw != "" {
+		positionIDu, err := strconv.Atoi(positionIDRaw)
+
+		if err != nil {
+			c.Error(fmt.Sprintf("Position %s invalid", positionIDRaw))
+			w.WriteHeader(http.StatusBadRequest)
+			c.ErrorWrite("Position is invalid", w)
+			return
+		}
+
+		positionID = uint(positionIDu)
+	}
+
+	stats, err := stats.GetPlayerStats(uint(playerID), uint(teamID), seasonID, positionID, c.datasource)
 
 	if err != nil {
 		c.Error(fmt.Sprintf("Error fetching stats: %s", err))
