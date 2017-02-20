@@ -14,6 +14,7 @@ type metric struct {
 	Name      string  `json:"name"`
 	Value     float64 `json:"value"`
 	Deviation float64 `json:"deviation"`
+	LastMatch float64 `json:"last_match"`
 }
 
 type playerMatch struct {
