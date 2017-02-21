@@ -17,7 +17,7 @@ type PlayerStats struct {
 
 // GetPlayerStats calcule et retourne les statistiques d'un joueur
 // pour une saison
-func GetPlayerStats(playerID uint, teamID uint, seasonID uint, data *common.Datasource) (*PlayerStats, error) {
+func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, data *common.Datasource) (*PlayerStats, error) {
 	var err error
 
 	// On récupère le joueur
@@ -33,15 +33,44 @@ func GetPlayerStats(playerID uint, teamID uint, seasonID uint, data *common.Data
 		return nil, err
 	}
 
-	matches, err := data.GetMatches(playerID, teamID, seasonID)
+	matches, err := data.GetMatches(teamID, seasonID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	playerMatches := make([]playerMatch, len(matches))
+	// On filtre les match par position et par joueur. Faire ça via GORM aurait été *vraiment* mieux,
+	// mais.. Well.. GORM.
+	//  ______    ____    _____     _____   _____  __      __  ______     __  __   ______
+	// |  ____|  / __ \  |  __ \   / ____| |_   _| \ \    / / |  ____|   |  \/  | |  ____|
+	// | |__    | |  | | | |__) | | |  __    | |    \ \  / /  | |__      | \  / | | |__
+	// |  __|   | |  | | |  _  /  | | |_ |   | |     \ \/ /   |  __|     | |\/| | |  __|
+	// | |      | |__| | | | \ \  | |__| |  _| |_     \  /    | |____    | |  | | | |____
+	// |_|       \____/  |_|  \_\  \_____| |_____|     \/     |______|   |_|  |_| |______|
 
-	for i, match := range matches {
+	var filteredMatches []models.Partie
+
+	filteredMatches = []models.Partie{}
+
+	for _, match := range matches {
+		pos, err := data.GetMatchPosition(int(playerID), int(match.ID))
+		if err != nil {
+			// Le joueur n'était pas dans la partie
+			continue
+		}
+
+		if positionID != 0 {
+			if pos.ID == positionID {
+				filteredMatches = append(filteredMatches, match)
+			}
+		} else {
+			filteredMatches = append(filteredMatches, match)
+		}
+	}
+
+	playerMatches := make([]playerMatch, len(filteredMatches))
+
+	for i, match := range filteredMatches {
 		var advTeam models.Equipe
 
 		if t.ID == match.EquipeMaison.ID {

@@ -86,9 +86,13 @@ func (c *ConsumeService) getRouter() http.Handler {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/api/stats/player/{playerID}/team/{teamID}", c.PlayerStatsHandler)
-	r.HandleFunc("/api/stats/team/{teamID}", c.TeamStatsHandler)
-	r.HandleFunc("/api/seed", c.SeedHandler)
 	r.HandleFunc("/api/stats/match/{matchID}/player/{playerID}", c.PlayerMatchStatsHandler)
+	r.HandleFunc("/api/stats/team/{teamID}", c.TeamStatsHandler)
+	r.HandleFunc("/api/stats/player/{playerID}/positions", c.PlayerPositionsHandler)
+
+	r.HandleFunc("/api/seasons", c.SeasonsHandler)
+
+	r.HandleFunc("/api/seed", c.SeedHandler)
 
 	return c.Middleware(r)
 }
