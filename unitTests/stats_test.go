@@ -91,7 +91,7 @@ func TestStats(t *testing.T) {
 		t.Run("GetTeamStats() returns correct team stats.", func(t *testing.T) {
 			teamStats, _ := stats.GetTeamStats(c.TestID, currentSeason.ID, data)
 
-			if !c.IsNil && (stats.ID != c.ExpectID) {
+			if !c.IsNil && (teamStats.ID != c.ExpectID) {
 				t.Errorf("Expected team %d, got %d", c.ExpectID, teamStats.ID)
 			}
 		})
@@ -99,7 +99,7 @@ func TestStats(t *testing.T) {
 		t.Run("GetTeamStats() returns nil when team not found", func(t *testing.T) {
 			teamStats, err := stats.GetTeamStats(c.TestID, currentSeason.ID, data)
 
-			if c.IsNil && ((stats != nil) || err == nil) {
+			if c.IsNil && ((teamStats != nil) || err == nil) {
 				t.Errorf("Expected team to be Nil, got ID %d instead", teamStats.ID)
 			}
 		})
@@ -123,7 +123,7 @@ func TestStats(t *testing.T) {
 		t.Run("GetPlayerActions() returns correct player actions.", func(t *testing.T) {
 			actions, _ := stats.GetPlayerActions(c.TestID, match.ID, data)
 
-			if !c.IsNil && (stats.ID != c.ExpectID) {
+			if !c.IsNil && (actions.ID != c.ExpectID) {
 				t.Errorf("Expected %d, got %d", c.TestID, actions.ID)
 			}
 		})
@@ -131,7 +131,7 @@ func TestStats(t *testing.T) {
 		t.Run("GetPlayerActions() returns nil when player not found", func(t *testing.T) {
 			actions, err := stats.GetPlayerActions(c.TestID, match.ID, data)
 
-			if c.IsNil && ((stactionsats != nil) || err == nil) {
+			if c.IsNil && ((actions != nil) || err == nil) {
 				t.Errorf("Expected player match stats ID to be Nil, got ID %d instead", actions.ID)
 			}
 		})
