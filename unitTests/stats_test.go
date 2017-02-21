@@ -27,7 +27,7 @@ func TestStats(t *testing.T) {
 	}
 
     //Le datasource qui va servir aux tests.
-	data :=common.NewDatasource(config.DatabaseDriver, config.ConnectionString)
+	data := common.NewDatasource(config.DatabaseDriver, config.ConnectionString)
 
     // On va chercher la saison en cours.
     currentSeason, err := data.GetCurrentSeason()
@@ -103,7 +103,7 @@ func TestStats(t *testing.T) {
 		})
 
 		t.Run("GetPlayerActions() returns nil when player not found", func(t *testing.T) {
-			actions, err := stats.GetPlayerActions(c.TestTeamID, currentSeason.ID, data)
+			actions, err := stats.GetPlayerActions(c.TestID, match.ID, data)
 
 			if c.IsNil && ((stactionsats != nil) || err == nil) {
 				t.Errorf("Expected player match stats ID to be Nil, got ID %d instead", actions.ID)
