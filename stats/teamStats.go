@@ -22,7 +22,7 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 	}
 
 	//On récupère tous les matchs d'une équipe.
-	matches, err := data.GetMatches(0, teamID, seasonID)
+	matches, err := data.GetMatches(teamID, seasonID)
 
 	var nbMatchs = float64(len(matches))
 
@@ -50,10 +50,19 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 			//SCore de performance.
 			metric3 += m[2].Value
 		}
+
+		latestMatch, err := data.GetLatestMatch(teamID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		latestMetrics := getMetrics(&player, latestMatch)
+
 		metric := []metric{
-			metric{ID: 1, Name: "Volume de Jeu", Value: metric1 / nbMatchs, Deviation: 1},
-			metric{ID: 2, Name: "Indice d'efficacité", Value: metric2 / nbMatchs, Deviation: 1},
-			metric{ID: 3, Name: "Score de performance", Value: metric3 / nbMatchs, Deviation: 1},
+			metric{ID: 1, Name: "Volume de Jeu", Value: metric1 / nbMatchs, Deviation: 1, LastMatch: latestMetrics[0].Value},
+			metric{ID: 2, Name: "Indice d'efficacité", Value: metric2 / nbMatchs, Deviation: 1, LastMatch: latestMetrics[1].Value},
+			metric{ID: 3, Name: "Score de performance", Value: metric3 / nbMatchs, Deviation: 1, LastMatch: latestMetrics[2].Value},
 		}
 
 		players[i] = playerSeason{
