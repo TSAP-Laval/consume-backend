@@ -7,13 +7,39 @@ import (
     "github.com/TSAP-Laval/common"
 
     "github.com/TSAP-Laval/consume-backend/stats"
+
+    "github.com/kelseyhightower/envconfig"
 )
+
+type testCase struct {
+	TestID   uint
+	IsNil    bool
+	ExpectID uint
+}
+
+type configuration struct {
+	DatabaseDriver   string
+	ConnectionString string
+	SeedDataPath     string
+}
+
+func getConfig() (*configuration, error) {
+	var c configuration
+
+	err := envconfig.Process("TSAP", &c)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &c, err
+}
 
 
 func TestStats(t *testing.T) {
 
     // On récupère la bonne configuration.
-	config, err := common.getConfig()
+	config, err := getConfig()
 
 	if err != nil {
 		t.Errorf("Error loading configuration: %s", err.Error())
@@ -48,7 +74,7 @@ func TestStats(t *testing.T) {
 		}
 
     // TEAMSTATS.GO
-	teamStatsCases := []common.testCase {
+	teamStatsCases := []testCase {
 		{TestID: 3, IsNil: false, ExpectID: 3},
 		{TestID: 99999, IsNil: true, ExpectID: 1},
 	}
@@ -63,24 +89,24 @@ func TestStats(t *testing.T) {
 		})
 
 		t.Run("GetTeamStats() returns correct team stats.", func(t *testing.T) {
-			stats, _ := stats.GetTeamStats(c.TestID, currentSeason.ID, data)
+			teamStats, _ := stats.GetTeamStats(c.TestID, currentSeason.ID, data)
 
 			if !c.IsNil && (stats.ID != c.ExpectID) {
-				t.Errorf("Expected team %d, got %d", c.ExpectID, stats.ID)
+				t.Errorf("Expected team %d, got %d", c.ExpectID, teamStats.ID)
 			}
 		})
 
 		t.Run("GetTeamStats() returns nil when team not found", func(t *testing.T) {
-			stats, err := stats.GetTeamStats(c.TestID, currentSeason.ID, data)
+			teamStats, err := stats.GetTeamStats(c.TestID, currentSeason.ID, data)
 
 			if c.IsNil && ((stats != nil) || err == nil) {
-				t.Errorf("Expected team to be Nil, got ID %d instead", stats.ID)
+				t.Errorf("Expected team to be Nil, got ID %d instead", teamStats.ID)
 			}
 		})
 	}
 
     // PLAYERMATCHSTATS.GO
-    playerMatchStatsCases := []common.testCase {
+    playerMatchStatsCases := []testCase {
 		{TestID: 119, IsNil: false, ExpectID: 119},
 		{TestID: 99999, IsNil: true, ExpectID: 1},
 	}
@@ -112,7 +138,7 @@ func TestStats(t *testing.T) {
 	}
 
     // PLAYERSTATS.GO
-    playerStatsCases := []common.testCase {
+    playerStatsCases := []testCase {
 		{TestID: 119, IsNil: false, ExpectID: 119},
 		{TestID: 99999, IsNil: true, ExpectID: 1},
 	}
