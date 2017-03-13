@@ -1,6 +1,9 @@
 package stats
 
-import "github.com/TSAP-Laval/common"
+import (
+	"github.com/TSAP-Laval/common"
+	"github.com/TSAP-Laval/models"
+)
 
 // TeamStats représente les statistiques d'une équipe pour
 // une saison.
@@ -12,8 +15,7 @@ type TeamStats struct {
 
 // GetTeamStats calcule et retourne les statistiques d'une équipe
 // pour une saison
-func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamStats, error) {
-	var err error
+func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamStats, error) {
 
 	// On récupère l'équipe sélectionnée.
 	t, err := data.GetTeam(teamID)
@@ -51,7 +53,8 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 			metric3 += m[2].Value
 		}
 
-		latestMatch, err := data.GetLatestMatch(teamID)
+		var latestMatch *models.Partie
+		latestMatch, err = data.GetLatestMatch(teamID)
 
 		if err != nil {
 			return nil, err

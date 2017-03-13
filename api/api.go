@@ -26,7 +26,7 @@ type ConsumeConfiguration struct {
 // ConsumeService represents a single service instance
 type ConsumeService struct {
 	logger     *log.Logger
-	datasource *common.Datasource
+	datasource common.IDatasource
 	config     *ConsumeConfiguration
 	server     *manners.GracefulServer
 }

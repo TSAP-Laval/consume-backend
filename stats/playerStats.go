@@ -17,9 +17,7 @@ type PlayerStats struct {
 
 // GetPlayerStats calcule et retourne les statistiques d'un joueur
 // pour une saison
-func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, data *common.Datasource) (*PlayerStats, error) {
-	var err error
-
+func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, data common.IDatasource) (*PlayerStats, error) {
 	// On récupère le joueur
 	player, err := data.GetPlayer(playerID)
 
@@ -52,8 +50,9 @@ func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, 
 
 	filteredMatches = []models.Partie{}
 
+	var pos *models.Position
 	for _, match := range matches {
-		pos, err := data.GetMatchPosition(int(playerID), int(match.ID))
+		pos, err = data.GetMatchPosition(int(playerID), int(match.ID))
 		if err != nil {
 			// Le joueur n'était pas dans la partie
 			continue
