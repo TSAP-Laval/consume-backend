@@ -31,11 +31,15 @@ func getIE(player *models.Joueur, match *models.Partie, vj float64) float64 {
 	return pos / vj
 }
 
+func getSP(vj float64, ie float64) float64 {
+	return vj + ie
+}
+
 func getMetrics(player *models.Joueur, match *models.Partie) []metric {
 	vj := getVJ(player, match)
 	ie := getIE(player, match, vj)
 
-	sp := vj + ie
+	sp := getSP(vj, ie)
 
 	return []metric{
 		metric{ID: 1, Name: "Volume de Jeu", Value: vj, Deviation: 1},
