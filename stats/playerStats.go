@@ -51,8 +51,8 @@ func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, 
 	filteredMatches = []models.Partie{}
 
 	var pos *models.Position
-	for _, match := range matches {
-		pos, err = data.GetMatchPosition(int(playerID), int(match.ID))
+	for _, match := range *matches {
+		pos, err = data.GetMatchPosition(playerID, match.ID)
 		if err != nil {
 			// Le joueur n'était pas dans la partie
 			continue

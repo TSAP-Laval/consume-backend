@@ -26,7 +26,7 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 	//On récupère tous les matchs d'une équipe.
 	matches, err := data.GetMatches(teamID, seasonID)
 
-	var nbMatchs = float64(len(matches))
+	var nbMatchs = float64(len(*matches))
 
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 	// On boucle sur tous les joueurs d'une équipe.
 	for i, player := range t.Joueurs {
 		// On boucle sur tous les matchs
-		for _, match := range matches {
+		for _, match := range *matches {
 
 			m := getMetrics(&player, &match)
 			// On fait la somme des metrics:

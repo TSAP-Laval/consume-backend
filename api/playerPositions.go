@@ -25,7 +25,7 @@ func (c *ConsumeService) PlayerPositionsHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	positions, err := c.datasource.GetPositions(playerID)
+	positions, err := c.datasource.GetPositions(uint(playerID))
 
 	if err != nil {
 		var errMsg string

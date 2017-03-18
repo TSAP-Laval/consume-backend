@@ -19,15 +19,15 @@ func (m *MockDatasource) GetCurrentSeason() (*models.Saison, error)   { return n
 func (m *MockDatasource) GetSeasons() (*[]models.Saison, error)       { return nil, nil }
 func (m *MockDatasource) GetTeam(teamID uint) (*models.Equipe, error) { return nil, nil }
 
-func (m *MockDatasource) GetMatches(teamID uint, seasonID uint) ([]models.Partie, error) {
+func (m *MockDatasource) GetMatches(teamID uint, seasonID uint) (*[]models.Partie, error) {
 	return nil, nil
 }
-func (m *MockDatasource) GetMatchPosition(playerID int, matchID int) (*models.Position, error) {
+func (m *MockDatasource) GetMatchPosition(playerID uint, matchID uint) (*models.Position, error) {
 	return nil, nil
 }
-func (m *MockDatasource) GetPositions(playerID int) ([]models.Position, error) { return nil, nil }
-func (m *MockDatasource) GetLatestMatch(teamID uint) (*models.Partie, error)   { return nil, nil }
-func (m *MockDatasource) GetCoach(coachID uint) (*models.Entraineur, error)    { return nil, nil }
+func (m *MockDatasource) GetPositions(playerID uint) (*[]models.Position, error) { return nil, nil }
+func (m *MockDatasource) GetLatestMatch(teamID uint) (*models.Partie, error)     { return nil, nil }
+func (m *MockDatasource) GetCoach(coachID uint) (*models.Entraineur, error)      { return nil, nil }
 
 // Fonctions de l'interface IDatasource qui sont pertinentes à nos tests
 func (m *MockDatasource) GetMatch(matchID uint) (*models.Partie, error) {
