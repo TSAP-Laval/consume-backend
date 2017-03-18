@@ -1,6 +1,7 @@
 package seasonsmodule
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/TSAP-Laval/common"
@@ -12,14 +13,16 @@ type SeasonsController struct {
 	core.Controller
 	datasource common.IDatasource
 	config     *core.ConsumeConfiguration
+	logger     *log.Logger
 }
 
 // NewSeasonsController instancie un nouveau controlleur
-func NewSeasonsController(datasource common.IDatasource, config *core.ConsumeConfiguration) *SeasonsController {
+func NewSeasonsController(datasource common.IDatasource, config *core.ConsumeConfiguration, logger *log.Logger) *SeasonsController {
 	return &SeasonsController{
 		Controller: core.Controller{},
 		datasource: datasource,
 		config:     config,
+		logger:     logger,
 	}
 }
 

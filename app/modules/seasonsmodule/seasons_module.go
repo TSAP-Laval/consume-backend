@@ -1,6 +1,7 @@
 package seasonsmodule
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/TSAP-Laval/common"
@@ -13,9 +14,9 @@ type SeasonsModule struct {
 }
 
 // NewSeasonsModule instancie un nouveau module de gestion des saisons
-func NewSeasonsModule(datasource common.IDatasource, config *core.ConsumeConfiguration) *SeasonsModule {
+func NewSeasonsModule(datasource common.IDatasource, config *core.ConsumeConfiguration, logger *log.Logger) *SeasonsModule {
 
-	kc := NewSeasonsController(datasource, config)
+	kc := NewSeasonsController(datasource, config, logger)
 
 	r := []core.Route{
 		core.Route{

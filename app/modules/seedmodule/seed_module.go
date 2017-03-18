@@ -1,6 +1,7 @@
 package seedmodule
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/TSAP-Laval/common"
@@ -13,9 +14,9 @@ type SeedModule struct {
 }
 
 // NewSeedModule instancie un nouveau module de gestion des saisons
-func NewSeedModule(datasource common.IDatasource, config *core.ConsumeConfiguration) *SeedModule {
+func NewSeedModule(datasource common.IDatasource, config *core.ConsumeConfiguration, logger *log.Logger) *SeedModule {
 
-	kc := NewSeedController(datasource, config)
+	kc := NewSeedController(datasource, config, logger)
 
 	r := []core.Route{
 		core.Route{

@@ -1,6 +1,7 @@
 package statsmodule
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/TSAP-Laval/common"
@@ -13,9 +14,9 @@ type StatsModule struct {
 }
 
 // NewStatsModule instancie un nouveau module de gestion des statistiques
-func NewStatsModule(datasource common.IDatasource, config *core.ConsumeConfiguration) core.Module {
+func NewStatsModule(datasource common.IDatasource, config *core.ConsumeConfiguration, logger *log.Logger) core.Module {
 
-	kc := NewStatsController(datasource, config)
+	kc := NewStatsController(datasource, config, logger)
 
 	r := []core.Route{
 		core.Route{

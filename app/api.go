@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"io"
 	"log"
 
@@ -53,9 +52,9 @@ func (c *ConsumeService) Middleware(h http.Handler) http.Handler {
 
 func (c *ConsumeService) initModules() []core.Module {
 	return []core.Module{
-		seasonsmodule.NewSeasonsModule(c.datasource, c.config),
-		statsmodule.NewStatsModule(c.datasource, c.config),
-		seedmodule.NewSeedModule(c.datasource, c.config),
+		seasonsmodule.NewSeasonsModule(c.datasource, c.config, c.logger),
+		statsmodule.NewStatsModule(c.datasource, c.config, c.logger),
+		seedmodule.NewSeedModule(c.datasource, c.config, c.logger),
 	}
 }
 
@@ -80,7 +79,7 @@ func (c *ConsumeService) Start() {
 		c.server.Addr = c.config.APIURL
 		c.server.Handler = c.getRouter()
 		c.server.ListenAndServe()
-		fmt.Println("Consume shutting down...")
+		c.logger.Println("Consume shutting down...")
 	}()
 	c.logger.Printf("TSAP-Consume started on %s... \n", c.config.APIURL)
 }

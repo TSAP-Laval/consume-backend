@@ -1,7 +1,7 @@
 package seedmodule
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/TSAP-Laval/common"
@@ -13,33 +13,32 @@ type SeedController struct {
 	core.Controller
 	datasource common.IDatasource
 	config     *core.ConsumeConfiguration
+	logger     *log.Logger
 }
 
 // NewSeedController instancie un SeedController
-func NewSeedController(datasource common.IDatasource, config *core.ConsumeConfiguration) *SeedController {
+func NewSeedController(datasource common.IDatasource, config *core.ConsumeConfiguration, logger *log.Logger) *SeedController {
 	return &SeedController{
 		Controller: core.Controller{},
 		datasource: datasource,
 		config:     config,
+		logger:     logger,
 	}
 }
 
 // StartSeed gère l'endpoint de seeding
 func (c *SeedController) StartSeed(w http.ResponseWriter, r *http.Request) {
-
-	// TODO: Rendre le seeding disponible seulement en debug mode
 	go c.seedData()
 
 	c.SendJSON(w, core.SimpleMessage{Body: "Seeding started."}, http.StatusOK)
 }
 
 func (c *SeedController) seedData() {
-	// TODO: Enlever les Println
-	fmt.Println("Seeding...")
+	c.logger.Println("Seeding...")
 	err := common.SeedData(c.config.DatabaseDriver, c.config.ConnectionString, c.config.SeedDataPath)
 	if err != nil {
-		fmt.Println(err.Error())
+		c.logger.Printf("Error - %s", err.Error())
 	} else {
-		fmt.Println("Seeding Complete!")
+		c.logger.Println("Seeding Complete!")
 	}
 }

@@ -2,6 +2,7 @@ package statsmodule
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -16,14 +17,16 @@ type StatsController struct {
 	core.Controller
 	datasource common.IDatasource
 	config     *core.ConsumeConfiguration
+	logger     *log.Logger
 }
 
 // NewStatsController instancie un nouveau controlleur
-func NewStatsController(datasource common.IDatasource, config *core.ConsumeConfiguration) *StatsController {
+func NewStatsController(datasource common.IDatasource, config *core.ConsumeConfiguration, logger *log.Logger) *StatsController {
 	return &StatsController{
 		Controller: core.Controller{},
 		datasource: datasource,
 		config:     config,
+		logger:     logger,
 	}
 }
 
