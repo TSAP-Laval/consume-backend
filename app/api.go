@@ -1,38 +1,30 @@
-package api
+package app
 
 import (
 	"io"
 	"log"
 
-	"encoding/json"
-
 	"net/http"
 
 	"github.com/TSAP-Laval/common"
+	"github.com/TSAP-Laval/consume-backend/app/core"
+	"github.com/TSAP-Laval/consume-backend/app/modules/seasonsmodule"
+	"github.com/TSAP-Laval/consume-backend/app/modules/seedmodule"
+	"github.com/TSAP-Laval/consume-backend/app/modules/statsmodule"
 	"github.com/braintree/manners"
 	"github.com/gorilla/mux"
 )
 
-// ConsumeConfiguration représente les paramètres
-// exposés par l'application
-type ConsumeConfiguration struct {
-	DatabaseDriver   string
-	ConnectionString string
-	SeedDataPath     string
-	APIURL           string
-	Debug            bool
-}
-
 // ConsumeService represents a single service instance
 type ConsumeService struct {
 	logger     *log.Logger
-	datasource *common.Datasource
-	config     *ConsumeConfiguration
+	datasource common.IDatasource
+	config     *core.ConsumeConfiguration
 	server     *manners.GracefulServer
 }
 
 // New crée une nouvelle instance du service
-func New(writer io.Writer, config *ConsumeConfiguration) *ConsumeService {
+func New(writer io.Writer, config *core.ConsumeConfiguration) *ConsumeService {
 
 	return &ConsumeService{
 		logger:     log.New(writer, "[consume-api] ", log.Flags()),
@@ -40,30 +32,6 @@ func New(writer io.Writer, config *ConsumeConfiguration) *ConsumeService {
 		config:     config,
 		server:     manners.NewServer(),
 	}
-}
-
-// Info écrit un message vers le logger du service
-func (c *ConsumeService) Info(message string) {
-	c.logger.Println(message)
-}
-
-// Info écrit un message d'erreur vers le logger du service
-func (c *ConsumeService) Error(message string) {
-	c.logger.Printf("ERROR - %s\n", message)
-}
-
-// ErrorWrite écrit un message d'erreur en format JSON vers le writer
-// passé en paramètre
-func (c *ConsumeService) ErrorWrite(message string, w io.Writer) error {
-	bytes, err := json.Marshal(errorMessage{Error: message})
-
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(bytes)
-
-	return err
 }
 
 // Middleware applique les différents middleware
@@ -82,18 +50,25 @@ func (c *ConsumeService) Middleware(h http.Handler) http.Handler {
 	})
 }
 
+func (c *ConsumeService) initModules() []core.Module {
+	return []core.Module{
+		seasonsmodule.NewSeasonsModule(c.datasource, c.config, c.logger),
+		statsmodule.NewStatsModule(c.datasource, c.config, c.logger),
+		seedmodule.NewSeedModule(c.datasource, c.config, c.logger),
+	}
+}
+
 func (c *ConsumeService) getRouter() http.Handler {
 	r := mux.NewRouter()
+	s := r.PathPrefix("/api/").Subrouter()
 
-	r.HandleFunc("/api/stats/player/{playerID}/team/{teamID}", c.PlayerStatsHandler)
-	r.HandleFunc("/api/stats/match/{matchID}/player/{playerID}", c.PlayerMatchStatsHandler)
-	r.HandleFunc("/api/stats/team/{teamID}", c.TeamStatsHandler)
-	r.HandleFunc("/api/stats/player/{playerID}/positions", c.PlayerPositionsHandler)
+	for _, m := range c.initModules() {
+		for _, route := range m.GetRoutes() {
+			s.HandleFunc(route.Path, route.Handler).Methods(route.Method)
+		}
+	}
 
-	r.HandleFunc("/api/seasons", c.SeasonsHandler)
-
-	r.HandleFunc("/api/seed", c.SeedHandler)
-
+	http.Handle("/", r)
 	return c.Middleware(r)
 }
 
@@ -104,7 +79,7 @@ func (c *ConsumeService) Start() {
 		c.server.Addr = c.config.APIURL
 		c.server.Handler = c.getRouter()
 		c.server.ListenAndServe()
-		c.Info("Consume shutting down...")
+		c.logger.Println("Consume shutting down...")
 	}()
 	c.logger.Printf("TSAP-Consume started on %s... \n", c.config.APIURL)
 }
