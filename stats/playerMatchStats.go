@@ -12,7 +12,7 @@ type PlayerMatchStats struct {
 
 // GetPlayerActions retourne les actions d'un joueur lors d'un partie
 // avec des informations sur celle-ci
-func GetPlayerActions(playerID uint, matchID uint, data *common.Datasource) (*PlayerMatchStats, error) {
+func GetPlayerActions(playerID uint, matchID uint, data common.IDatasource) (*PlayerMatchStats, error) {
 
 	// On récupère le joueur
 	_, err := data.GetPlayer(playerID)

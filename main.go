@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/TSAP-Laval/consume-backend/api"
+	"github.com/TSAP-Laval/consume-backend/app"
+	"github.com/TSAP-Laval/consume-backend/app/core"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -13,7 +14,7 @@ func main() {
 
 	// On récupère la configuration
 	// de l'environnement & on la passe au service
-	var c api.ConsumeConfiguration
+	var c core.ConsumeConfiguration
 
 	err := envconfig.Process("TSAP", &c)
 
@@ -21,7 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	service := api.New(os.Stdout, &c)
+	service := app.New(os.Stdout, &c)
 	service.Start()
 
 	reader := bufio.NewReader(os.Stdin)
