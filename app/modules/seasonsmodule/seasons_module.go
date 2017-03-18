@@ -20,7 +20,7 @@ func NewSeasonsModule(datasource common.IDatasource, config *core.ConsumeConfigu
 	r := []core.Route{
 		core.Route{
 			Method:  http.MethodGet,
-			Path:    "/api/seasons",
+			Path:    "/seasons",
 			Handler: kc.GetAllSeasons,
 		},
 	}

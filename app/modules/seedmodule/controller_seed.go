@@ -40,6 +40,6 @@ func (c *SeedController) seedData() {
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
-		fmt.Println(err.Error())
+		fmt.Println("Seeding Complete!")
 	}
 }

@@ -20,25 +20,25 @@ func NewStatsModule(datasource common.IDatasource, config *core.ConsumeConfigura
 	r := []core.Route{
 		core.Route{
 			Method:  http.MethodGet,
-			Path:    "/api/stats/player/{playerID}/team/{teamID}",
+			Path:    "/stats/player/{playerID}/team/{teamID}",
 			Handler: kc.GetPlayerStats,
 		},
 
 		core.Route{
 			Method:  http.MethodGet,
-			Path:    "/api/stats/match/{matchID}/player/{playerID}",
+			Path:    "/stats/match/{matchID}/player/{playerID}",
 			Handler: kc.GetPlayerMatchStats,
 		},
 
 		core.Route{
 			Method:  http.MethodGet,
-			Path:    "/api/stats/team/{teamID}",
+			Path:    "/stats/team/{teamID}",
 			Handler: kc.GetTeamStats,
 		},
 
 		core.Route{
 			Method:  http.MethodGet,
-			Path:    "/api/stats/player/{playerID}/positions",
+			Path:    "/stats/player/{playerID}/positions",
 			Handler: kc.GetPlayerPositions,
 		},
 	}

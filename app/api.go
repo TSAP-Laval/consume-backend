@@ -61,7 +61,15 @@ func (c *ConsumeService) initModules() []core.Module {
 
 func (c *ConsumeService) getRouter() http.Handler {
 	r := mux.NewRouter()
+	s := r.PathPrefix("/api/").Subrouter()
 
+	for _, m := range c.initModules() {
+		for _, route := range m.GetRoutes() {
+			s.HandleFunc(route.Path, route.Handler).Methods(route.Method)
+		}
+	}
+
+	http.Handle("/", r)
 	return c.Middleware(r)
 }
 

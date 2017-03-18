@@ -20,7 +20,7 @@ func NewSeedModule(datasource common.IDatasource, config *core.ConsumeConfigurat
 	r := []core.Route{
 		core.Route{
 			Method:  http.MethodGet,
-			Path:    "/api/seed",
+			Path:    "/seed",
 			Handler: kc.StartSeed,
 		},
 	}
