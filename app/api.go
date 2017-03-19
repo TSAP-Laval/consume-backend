@@ -8,6 +8,7 @@ import (
 
 	"github.com/TSAP-Laval/common"
 	"github.com/TSAP-Laval/consume-backend/app/core"
+	"github.com/TSAP-Laval/consume-backend/app/modules/metricsmodule"
 	"github.com/TSAP-Laval/consume-backend/app/modules/seasonsmodule"
 	"github.com/TSAP-Laval/consume-backend/app/modules/seedmodule"
 	"github.com/TSAP-Laval/consume-backend/app/modules/statsmodule"
@@ -55,6 +56,7 @@ func (c *ConsumeService) initModules() []core.Module {
 		seasonsmodule.NewSeasonsModule(c.datasource, c.config, c.logger),
 		statsmodule.NewStatsModule(c.datasource, c.config, c.logger),
 		seedmodule.NewSeedModule(c.datasource, c.config, c.logger),
+		metricsmodule.NewMetricsModule(c.datasource, c.config, c.logger),
 	}
 }
 
