@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/tsap-laval/consume-backend/app/modules/metricsmodule"
+	"github.com/TSAP-Laval/consume-backend/app/modules/metricsmodule"
 )
 
 func TestControllerSpec(t *testing.T) {
