@@ -7,3 +7,11 @@ type MetricsCreationSchema struct {
 	Formula     string `json:"formula"`
 	Description string `json:"description"`
 }
+
+// MetricsDisplaySchema est le schéma utilisé pour sérialiser une métrique
+type MetricsDisplaySchema struct {
+	ID          uint   `json:"id"`
+	Name        string `json:"name"`
+	Formula     string `json:"formula"`
+	Description string `json:"description"`
+}

@@ -29,6 +29,40 @@ func NewMetricsController(datasource common.IDatasource, config *core.ConsumeCon
 	}
 }
 
+// GetMetrics gère la récupération des métriques d'une équipe
+func (c *MetricsController) GetMetrics(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	teamIDRaw := vars["teamID"]
+
+	teamID, err := strconv.Atoi(teamIDRaw)
+
+	if err != nil {
+		c.SendJSON(w, core.ErrorMessage{
+			Error: fmt.Sprintf("TeamID %s invalid", teamIDRaw),
+		}, http.StatusBadRequest)
+	}
+
+	metrics, err := c.datasource.GetMetrics(uint(teamID))
+
+	if c.HandleError(err, w) {
+		return
+	}
+
+	displayMetrics := make([]MetricsDisplaySchema, len(*metrics))
+
+	for i, m := range *metrics {
+		displayMetrics[i] = MetricsDisplaySchema{
+			ID:          m.ID,
+			Name:        m.Nom,
+			Description: m.Description,
+			Formula:     m.Equation,
+		}
+	}
+
+	c.SendJSON(w, displayMetrics, http.StatusOK)
+}
+
 // CreateMetric gère la création d'une métrique
 func (c *MetricsController) CreateMetric(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
