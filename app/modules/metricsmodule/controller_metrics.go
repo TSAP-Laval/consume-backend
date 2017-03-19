@@ -48,14 +48,14 @@ func (c *MetricsController) CreateMetric(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if metric.Name == "" || metric.Formula == "" {
+	if metric.Name == "" || metric.Formula == "" || metric.Description == "" {
 		c.SendJSON(w, core.ErrorMessage{
 			Error: "Invalid Payload",
 		}, http.StatusBadRequest)
 		return
 	}
 
-	err = c.datasource.CreateMetric(metric.Name, metric.Formula, uint(teamID))
+	err = c.datasource.CreateMetric(metric.Name, metric.Formula, metric.Description, uint(teamID))
 
 	if c.HandleError(err, w) {
 		return
