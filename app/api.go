@@ -66,8 +66,10 @@ func (c *ConsumeService) getRouter() http.Handler {
 		}
 	}
 
-	http.Handle("/", r)
-	return c.Middleware(r)
+	router := &core.CORSRouter{R: r}
+
+	http.Handle("/", router)
+	return c.Middleware(router)
 }
 
 // Start démarre le service
