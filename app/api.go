@@ -39,14 +39,10 @@ func New(writer io.Writer, config *core.ConsumeConfiguration) *ConsumeService {
 func (c *ConsumeService) Middleware(h http.Handler) http.Handler {
 	// Set CORS
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		if c.config.Debug {
-			// On ouvre l'accès de l'API si ce dernier est en debug
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-			w.Header().Set("Access-Control-Allow-Headers",
-				"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-		}
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 		h.ServeHTTP(w, r)
 	})
 }
