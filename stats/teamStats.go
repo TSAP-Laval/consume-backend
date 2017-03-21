@@ -1,6 +1,9 @@
 package stats
 
-import "github.com/TSAP-Laval/common"
+import (
+	"github.com/TSAP-Laval/common"
+	"github.com/TSAP-Laval/models"
+)
 
 // TeamStats représente les statistiques d'une équipe pour
 // une saison.
@@ -12,8 +15,7 @@ type TeamStats struct {
 
 // GetTeamStats calcule et retourne les statistiques d'une équipe
 // pour une saison
-func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamStats, error) {
-	var err error
+func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamStats, error) {
 
 	// On récupère l'équipe sélectionnée.
 	t, err := data.GetTeam(teamID)
@@ -24,7 +26,7 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 	//On récupère tous les matchs d'une équipe.
 	matches, err := data.GetMatches(teamID, seasonID)
 
-	var nbMatchs = float64(len(matches))
+	var nbMatchs = float64(len(*matches))
 
 	if err != nil {
 		return nil, err
@@ -39,7 +41,7 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 	// On boucle sur tous les joueurs d'une équipe.
 	for i, player := range t.Joueurs {
 		// On boucle sur tous les matchs
-		for _, match := range matches {
+		for _, match := range *matches {
 
 			m := getMetrics(&player, &match)
 			// On fait la somme des metrics:
@@ -51,7 +53,8 @@ func GetTeamStats(teamID uint, seasonID uint, data *common.Datasource) (*TeamSta
 			metric3 += m[2].Value
 		}
 
-		latestMatch, err := data.GetLatestMatch(teamID)
+		var latestMatch *models.Partie
+		latestMatch, err = data.GetLatestMatch(teamID)
 
 		if err != nil {
 			return nil, err
