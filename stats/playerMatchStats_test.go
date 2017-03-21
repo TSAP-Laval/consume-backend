@@ -32,6 +32,11 @@ func (m *MockDatasource) CreateMetric(name string, formula string, description s
 	return nil
 }
 
+func (m *MockDatasource) GetMapSize(teamID uint) (*models.MapParameters, error) { return nil, nil }
+func (m *MockDatasource) SetMapSize(width int, height int, teamID uint) error {
+	return nil
+}
+
 func (m *MockDatasource) GetMetrics(teamID uint) (*[]models.Metrique, error) { return nil, nil }
 
 func (m *MockDatasource) UpdateMetric(metricID uint, name string, formula string, description string) error {
