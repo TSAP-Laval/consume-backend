@@ -99,3 +99,77 @@ func (c *MetricsController) CreateMetric(w http.ResponseWriter, r *http.Request)
 		Body: "ok",
 	}, http.StatusCreated)
 }
+
+// UpdateMetric gère la modification d'une métrique existante
+func (c *MetricsController) UpdateMetric(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	metricIDRaw := vars["teamID"]
+
+	metricID, err := strconv.Atoi(metricIDRaw)
+
+	if err != nil {
+		c.SendJSON(w, core.ErrorMessage{
+			Error: fmt.Sprintf("MetricID %s invalid", metricIDRaw),
+		}, http.StatusBadRequest)
+	}
+
+	var metric MetricsCreationSchema
+	if err := c.GetContent(&metric, r); err != nil {
+		return
+	}
+
+	if metric.Name == "" || metric.Formula == "" || metric.Description == "" {
+		c.SendJSON(w, core.ErrorMessage{
+			Error: "Invalid Payload",
+		}, http.StatusBadRequest)
+		return
+	}
+
+	err = c.datasource.UpdateMetric(uint(metricID), metric.Name, metric.Formula, metric.Description)
+
+	if c.HandleError(err, w) {
+		return
+	}
+
+	c.SendJSON(w, core.SimpleMessage{
+		Body: "ok",
+	}, http.StatusOK)
+}
+
+// DeleteMetric gère la supression d'une métrique existante
+func (c *MetricsController) DeleteMetric(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	metricIDRaw := vars["teamID"]
+
+	metricID, err := strconv.Atoi(metricIDRaw)
+
+	if err != nil {
+		c.SendJSON(w, core.ErrorMessage{
+			Error: fmt.Sprintf("MetricID %s invalid", metricIDRaw),
+		}, http.StatusBadRequest)
+	}
+
+	var metric MetricsCreationSchema
+	if err := c.GetContent(&metric, r); err != nil {
+		return
+	}
+
+	if metric.Name == "" || metric.Formula == "" || metric.Description == "" {
+		c.SendJSON(w, core.ErrorMessage{
+			Error: "Invalid Payload",
+		}, http.StatusBadRequest)
+		return
+	}
+
+	err = c.datasource.UpdateMetric(uint(metricID), metric.Name, metric.Formula, metric.Description)
+
+	if c.HandleError(err, w) {
+		return
+	}
+
+	c.SendJSON(w, core.SimpleMessage{
+		Body: "ok",
+	}, http.StatusOK)
+}
