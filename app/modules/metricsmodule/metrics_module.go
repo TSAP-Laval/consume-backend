@@ -30,6 +30,18 @@ func NewMetricsModule(datasource common.IDatasource, config *core.ConsumeConfigu
 			Path:    "/teams/{teamID}/metrics",
 			Handler: kc.GetMetrics,
 		},
+
+		core.Route{
+			Method:  http.MethodPut,
+			Path:    "/teams/{teamID}/metrics/{metricID}",
+			Handler: kc.UpdateMetric,
+		},
+
+		core.Route{
+			Method:  http.MethodDelete,
+			Path:    "/teams/{teamID}/metrics/{metricID}",
+			Handler: kc.DeleteMetric,
+		},
 	}
 
 	return &MetricsModule{routes: r}
