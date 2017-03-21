@@ -30,6 +30,16 @@ func NewMetricsModule(datasource common.IDatasource, config *core.ConsumeConfigu
 			Path:    "/teams/{teamID}/metrics",
 			Handler: kc.GetMetrics,
 		},
+		core.Route{
+			Method:  http.MethodPost,
+			Path:    "/teams/{teamID}/map",
+			Handler: kc.SetMapParameters,
+		},
+		core.Route{
+			Method:  http.MethodGet,
+			Path:    "/teams/{teamID}/map",
+			Handler: kc.GetMapParameters,
+		},
 	}
 
 	return &MetricsModule{routes: r}
