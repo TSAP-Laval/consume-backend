@@ -12,6 +12,7 @@ import (
 	"github.com/TSAP-Laval/consume-backend/app/modules/seasonsmodule"
 	"github.com/TSAP-Laval/consume-backend/app/modules/seedmodule"
 	"github.com/TSAP-Laval/consume-backend/app/modules/statsmodule"
+	"github.com/TSAP-Laval/consume-backend/app/modules/teamsmodule"
 	"github.com/braintree/manners"
 	"github.com/gorilla/mux"
 )
@@ -39,14 +40,10 @@ func New(writer io.Writer, config *core.ConsumeConfiguration) *ConsumeService {
 func (c *ConsumeService) Middleware(h http.Handler) http.Handler {
 	// Set CORS
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		if c.config.Debug {
-			// On ouvre l'accès de l'API si ce dernier est en debug
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-			w.Header().Set("Access-Control-Allow-Headers",
-				"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-		}
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 		h.ServeHTTP(w, r)
 	})
 }
@@ -57,6 +54,7 @@ func (c *ConsumeService) initModules() []core.Module {
 		statsmodule.NewStatsModule(c.datasource, c.config, c.logger),
 		seedmodule.NewSeedModule(c.datasource, c.config, c.logger),
 		metricsmodule.NewMetricsModule(c.datasource, c.config, c.logger),
+		teamsmodule.NewTeamsModule(c.datasource, c.config, c.logger),
 	}
 }
 
@@ -70,8 +68,10 @@ func (c *ConsumeService) getRouter() http.Handler {
 		}
 	}
 
-	http.Handle("/", r)
-	return c.Middleware(r)
+	router := &core.CORSRouter{R: r}
+
+	http.Handle("/", router)
+	return c.Middleware(router)
 }
 
 // Start démarre le service
