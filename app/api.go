@@ -12,6 +12,7 @@ import (
 	"github.com/TSAP-Laval/consume-backend/app/modules/seasonsmodule"
 	"github.com/TSAP-Laval/consume-backend/app/modules/seedmodule"
 	"github.com/TSAP-Laval/consume-backend/app/modules/statsmodule"
+	"github.com/TSAP-Laval/consume-backend/app/modules/teamsmodule"
 	"github.com/braintree/manners"
 	"github.com/gorilla/mux"
 )
@@ -53,6 +54,7 @@ func (c *ConsumeService) initModules() []core.Module {
 		statsmodule.NewStatsModule(c.datasource, c.config, c.logger),
 		seedmodule.NewSeedModule(c.datasource, c.config, c.logger),
 		metricsmodule.NewMetricsModule(c.datasource, c.config, c.logger),
+		teamsmodule.NewTeamsModule(c.datasource, c.config, c.logger),
 	}
 }
 
