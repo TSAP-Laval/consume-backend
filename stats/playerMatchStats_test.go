@@ -34,6 +34,11 @@ func (m *MockDatasource) CreateMetric(name string, formula string, description s
 
 func (m *MockDatasource) GetMetrics(teamID uint) (*[]models.Metrique, error) { return nil, nil }
 
+func (m *MockDatasource) UpdateMetric(metricID uint, name string, formula string, description string) error {
+	return nil
+}
+func (m *MockDatasource) DeleteMetric(metricID uint) error { return nil }
+
 // Fonctions de l'interface IDatasource qui sont pertinentes à nos tests
 func (m *MockDatasource) GetMatch(matchID uint) (*models.Partie, error) {
 	if m.shouldMatchFail {

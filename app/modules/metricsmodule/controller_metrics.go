@@ -104,7 +104,7 @@ func (c *MetricsController) CreateMetric(w http.ResponseWriter, r *http.Request)
 func (c *MetricsController) UpdateMetric(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	metricIDRaw := vars["teamID"]
+	metricIDRaw := vars["metricID"]
 
 	metricID, err := strconv.Atoi(metricIDRaw)
 
@@ -141,7 +141,7 @@ func (c *MetricsController) UpdateMetric(w http.ResponseWriter, r *http.Request)
 func (c *MetricsController) DeleteMetric(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	metricIDRaw := vars["teamID"]
+	metricIDRaw := vars["metricID"]
 
 	metricID, err := strconv.Atoi(metricIDRaw)
 
@@ -151,19 +151,7 @@ func (c *MetricsController) DeleteMetric(w http.ResponseWriter, r *http.Request)
 		}, http.StatusBadRequest)
 	}
 
-	var metric MetricsCreationSchema
-	if err := c.GetContent(&metric, r); err != nil {
-		return
-	}
-
-	if metric.Name == "" || metric.Formula == "" || metric.Description == "" {
-		c.SendJSON(w, core.ErrorMessage{
-			Error: "Invalid Payload",
-		}, http.StatusBadRequest)
-		return
-	}
-
-	err = c.datasource.UpdateMetric(uint(metricID), metric.Name, metric.Formula, metric.Description)
+	err = c.datasource.DeleteMetric(uint(metricID))
 
 	if c.HandleError(err, w) {
 		return
