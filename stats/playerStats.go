@@ -69,6 +69,12 @@ func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, 
 
 	playerMatches := make([]playerMatch, len(filteredMatches))
 
+	metricsList, err := data.GetMetrics(t.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
 	for i, match := range filteredMatches {
 		var advTeam models.Equipe
 
@@ -78,11 +84,17 @@ func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, 
 			advTeam = match.EquipeMaison
 		}
 
+		computedMetrics, err := computeMetrics(player, &match, metricsList)
+
+		if err != nil {
+			return nil, err
+		}
+
 		playerMatches[i] = playerMatch{
 			ID:           match.ID,
 			Date:         match.Date,
 			OpposingTeam: team{ID: advTeam.ID, Name: advTeam.Nom},
-			Metrics:      getMetrics(player, &match),
+			Metrics:      computedMetrics,
 		}
 	}
 

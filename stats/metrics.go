@@ -1,49 +1,64 @@
 package stats
 
 import "github.com/TSAP-Laval/models"
+import "github.com/Knetic/govaluate"
+import "errors"
 
-func getVJ(player *models.Joueur, match *models.Partie) float64 {
-	var bc, br float64
+// getRuntimeContext récupère le nombre d'actions de chaque type, ce qui permet de substituer
+// les types par des nombres au sein des métriques définies par les utilisateurs
+func getRuntimeContext(player *models.Joueur, match *models.Partie) map[string]interface{} {
+
+	context := make(map[string]int)
 
 	for _, a := range match.Actions {
 		if a.JoueurID == int(player.ID) {
-			switch a.TypeAction.Nom {
-			case "BC":
-				bc++
-			case "BR":
-				br++
+			if _, ok := context[a.TypeAction.Nom]; ok {
+				context[a.TypeAction.Nom]++
+			} else {
+				context[a.TypeAction.Nom] = 0
 			}
 		}
 	}
 
-	return bc + br + 1
+	// Pas sur de comprendre pourquoi on peut pas cast map[string]int => map[string]interface{}...
+	genericContext := make(map[string]interface{}, len(context))
+
+	for k, v := range context {
+		genericContext[k] = v
+	}
+
+	return genericContext
 }
 
-func getIE(player *models.Joueur, match *models.Partie, vj float64) float64 {
-	var pos float64
+func computeMetrics(player *models.Joueur, match *models.Partie, metrics *[]models.Metrique) ([]metric, error) {
 
-	for _, a := range match.Actions {
-		if a.JoueurID == int(player.ID) && a.ActionPositive {
-			pos++
+	context := getRuntimeContext(player, match)
+
+	computedMetrics := make([]metric, len(*metrics))
+
+	for i, met := range *metrics {
+		// Création d'un bloc évaluable à partir de l'équation définie par l'utilisateur
+		expr, err := govaluate.NewEvaluableExpression(met.Equation)
+
+		if err != nil {
+			return nil, err
 		}
+
+		result, err := expr.Evaluate(context)
+
+		if err != nil {
+			return nil, err
+		}
+
+		fResult, ok := result.(float64)
+
+		// TODO: Remove
+		if !ok {
+			return nil, errors.New("Bruh")
+		}
+
+		computedMetrics[i] = metric{ID: met.ID, Name: met.Nom, Value: fResult}
 	}
 
-	return pos / vj
-}
-
-func getSP(vj float64, ie float64) float64 {
-	return vj + ie
-}
-
-func getMetrics(player *models.Joueur, match *models.Partie) []metric {
-	vj := getVJ(player, match)
-	ie := getIE(player, match, vj)
-
-	sp := getSP(vj, ie)
-
-	return []metric{
-		metric{ID: 1, Name: "Volume de Jeu", Value: vj, Deviation: 1},
-		metric{ID: 2, Name: "Indice d'efficacité", Value: ie, Deviation: 1},
-		metric{ID: 3, Name: "Score de performance", Value: sp, Deviation: 1},
-	}
+	return computedMetrics, nil
 }

@@ -35,15 +35,34 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 	//dans lequel on fera notre calcul de stats.
 	players := make([]playerSeason, len(t.Joueurs))
 
+	metricsList, err := data.GetMetrics(teamID)
+
+	if err != nil {
+		return nil, err
+	}
+
 	// Les métrics calculée.
-	var metric1, metric2, metric3 float64
+	metricSums := make(map[uint]metric)
+
+	// TODO: T'Étais rendu ici
 
 	// On boucle sur tous les joueurs d'une équipe.
 	for i, player := range t.Joueurs {
 		// On boucle sur tous les matchs
 		for _, match := range *matches {
 
-			m := getMetrics(&player, &match)
+			computedMetrics, err := computeMetrics(&player, &match, metricsList)
+
+			if err != nil {
+				return nil, err
+			}
+
+			for _, m := range computedMetrics {
+				if _, ok := metricSums[m.ID]; ok {
+					metricSums[m.ID].Value += m.Value
+				}
+			}
+
 			// On fait la somme des metrics:
 			//Volume de jeu.
 			metric1 += m[0].Value
