@@ -6,6 +6,8 @@ import "github.com/TSAP-Laval/common"
 // un match
 type PlayerMatchStats struct {
 	ID      uint     `json:"match_id"`
+	Number  int      `json:"number"`
+	Name    string   `json:"name"`
 	Date    string   `json:"date"`
 	Actions []action `json:"actions"`
 }
@@ -15,7 +17,7 @@ type PlayerMatchStats struct {
 func GetPlayerActions(playerID uint, matchID uint, data common.IDatasource) (*PlayerMatchStats, error) {
 
 	// On récupère le joueur
-	_, err := data.GetPlayer(playerID)
+	player, err := data.GetPlayer(playerID)
 
 	if err != nil {
 		return nil, err
@@ -46,6 +48,8 @@ func GetPlayerActions(playerID uint, matchID uint, data common.IDatasource) (*Pl
 
 	stats := PlayerMatchStats{
 		ID:      match.ID,
+		Number:  player.Numero,
+		Name:    player.Prenom + " " + player.Nom,
 		Date:    match.Date,
 		Actions: playerActions,
 	}
