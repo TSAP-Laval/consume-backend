@@ -20,8 +20,10 @@ type MapParamsDisplaySchema struct {
 // MatchesDisplaySchema représente les infos de base sur un match
 type MatchesDisplaySchema struct {
 	ID            uint   `json:"id"`
-	Lieu          string `json:"lieu"`
-	EquipeAdverse string `json:"equipe_adverse"`
+	Lieu          string `json:"place"`
+	Date          string `json:"date"`
+	Equipe        string `json:"team_name"`
+	EquipeAdverse string `json:"other_team_name"`
 	// À ajouter : le pointage?
 }
 
@@ -29,5 +31,6 @@ type MatchesDisplaySchema struct {
 type MatchActions struct {
 	MatchID uint                      `json:"match_id"`
 	TeamID  uint                      `json:"team_id"`
+	Date    string                    `json:"date"`
 	Players []*stats.PlayerMatchStats `json:"players"`
 }

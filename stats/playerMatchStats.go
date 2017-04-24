@@ -5,11 +5,12 @@ import "github.com/TSAP-Laval/common"
 // PlayerMatchStats représente les actions d'un joueur pour
 // un match
 type PlayerMatchStats struct {
-	ID      uint     `json:"match_id"`
-	Number  int      `json:"number"`
-	Name    string   `json:"name"`
-	Date    string   `json:"date"`
-	Actions []action `json:"actions"`
+	ID        uint     `json:"id"`
+	Number    int      `json:"number"`
+	FirstName string   `json:"first_name"`
+	LastName  string   `json:"last_name"`
+	Position  string   `json:"position"`
+	Actions   []action `json:"actions"`
 }
 
 // GetPlayerActions retourne les actions d'un joueur lors d'un partie
@@ -46,12 +47,17 @@ func GetPlayerActions(playerID uint, matchID uint, data common.IDatasource) (*Pl
 		}
 	}
 
+	position, err := data.GetMatchPosition(player.ID, match.ID)
+	if err != nil {
+		return nil, err
+	}
 	stats := PlayerMatchStats{
-		ID:      match.ID,
-		Number:  player.Numero,
-		Name:    player.Prenom + " " + player.Nom,
-		Date:    match.Date,
-		Actions: playerActions,
+		ID:        match.ID,
+		Number:    player.Numero,
+		FirstName: player.Prenom,
+		LastName:  player.Nom,
+		Position:  position.Nom,
+		Actions:   playerActions,
 	}
 
 	return &stats, err

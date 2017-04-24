@@ -130,11 +130,14 @@ func (c *TeamsController) GetTeamMatches(w http.ResponseWriter, r *http.Request)
 		displayMatches[i] = MatchesDisplaySchema{
 			ID:   m.ID,
 			Lieu: m.Lieu.Nom,
+			Date: m.Date,
 		}
 		if m.EquipeMaisonID == teamID {
 			displayMatches[i].EquipeAdverse = m.EquipeAdverse.Nom
+			displayMatches[i].Equipe = m.EquipeMaison.Nom
 		} else {
 			displayMatches[i].EquipeAdverse = m.EquipeMaison.Nom
+			displayMatches[i].Equipe = m.EquipeAdverse.Nom
 		}
 	}
 
@@ -180,6 +183,7 @@ func (c *TeamsController) GetTeamActions(w http.ResponseWriter, r *http.Request)
 	matchActions := MatchActions{}
 	matchActions.MatchID = uint(matchID)
 	matchActions.TeamID = uint(teamID)
+	matchActions.Date = match.Date
 	players := make([]*stats.PlayerMatchStats, len(joueurs))
 	for i, m := range joueurs {
 		players[i], err = stats.GetPlayerActions(m.ID, uint(matchID), c.datasource)
