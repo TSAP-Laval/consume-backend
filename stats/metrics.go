@@ -1,22 +1,27 @@
 package stats
 
-import "github.com/TSAP-Laval/models"
-import "github.com/Knetic/govaluate"
-import "errors"
+import (
+	"errors"
+
+	"math"
+
+	"github.com/Knetic/govaluate"
+	"github.com/TSAP-Laval/models"
+)
 
 // getRuntimeContext récupère le nombre d'actions de chaque type, ce qui permet de substituer
 // les types par des nombres au sein des métriques définies par les utilisateurs
-func getRuntimeContext(player *models.Joueur, match *models.Partie) map[string]interface{} {
+func getRuntimeContext(player *models.Joueur, match *models.Partie, actionTypes *[]models.TypeAction) map[string]interface{} {
 
 	context := make(map[string]int)
 
+	for _, t := range *actionTypes {
+		context[t.Nom] = 0
+	}
+
 	for _, a := range match.Actions {
 		if a.JoueurID == int(player.ID) {
-			if _, ok := context[a.TypeAction.Nom]; ok {
-				context[a.TypeAction.Nom]++
-			} else {
-				context[a.TypeAction.Nom] = 0
-			}
+			context[a.TypeAction.Nom]++
 		}
 	}
 
@@ -30,9 +35,9 @@ func getRuntimeContext(player *models.Joueur, match *models.Partie) map[string]i
 	return genericContext
 }
 
-func computeMetrics(player *models.Joueur, match *models.Partie, metrics *[]models.Metrique) ([]metric, error) {
+func computeMetrics(player *models.Joueur, match *models.Partie, metrics *[]models.Metrique, actionTypes *[]models.TypeAction) ([]metric, error) {
 
-	context := getRuntimeContext(player, match)
+	context := getRuntimeContext(player, match, actionTypes)
 
 	computedMetrics := make([]metric, len(*metrics))
 
@@ -52,10 +57,15 @@ func computeMetrics(player *models.Joueur, match *models.Partie, metrics *[]mode
 
 		fResult, ok := result.(float64)
 
-		// TODO: Remove
 		if !ok {
-			return nil, errors.New("Bruh")
+			return nil, errors.New("64-bit float casting error")
 		}
+
+		// < *whistling* >
+		if math.IsNaN(fResult) || math.IsInf(fResult, 0) {
+			fResult = 0
+		}
+		// </ *whistling* >
 
 		computedMetrics[i] = metric{ID: met.ID, Name: met.Nom, Value: fResult}
 	}

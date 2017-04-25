@@ -26,3 +26,4 @@ _testmain.go
 *.prof
 
 .DS_Store
+.idea/*

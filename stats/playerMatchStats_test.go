@@ -44,6 +44,8 @@ func (m *MockDatasource) UpdateMetric(metricID uint, name string, formula string
 }
 func (m *MockDatasource) DeleteMetric(metricID uint) error { return nil }
 
+func (m *MockDatasource) GetTypeActions() (*[]models.TypeAction, error) { return nil, nil }
+
 // Fonctions de l'interface IDatasource qui sont pertinentes à nos tests
 func (m *MockDatasource) GetMatch(matchID uint) (*models.Partie, error) {
 	if m.shouldMatchFail {

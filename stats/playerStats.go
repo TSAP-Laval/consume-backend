@@ -70,6 +70,7 @@ func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, 
 	playerMatches := make([]playerMatch, len(filteredMatches))
 
 	metricsList, err := data.GetMetrics(t.ID)
+	actionTypes, err := data.GetTypeActions()
 
 	if err != nil {
 		return nil, err
@@ -84,7 +85,7 @@ func GetPlayerStats(playerID uint, teamID uint, seasonID uint, positionID uint, 
 			advTeam = match.EquipeMaison
 		}
 
-		computedMetrics, err := computeMetrics(player, &match, metricsList)
+		computedMetrics, err := computeMetrics(player, &match, metricsList, actionTypes)
 
 		if err != nil {
 			return nil, err
