@@ -29,8 +29,11 @@ type MatchesDisplaySchema struct {
 
 //MatchActions représente l'id du match et tous les joueurs
 type MatchActions struct {
-	MatchID uint                      `json:"match_id"`
-	TeamID  uint                      `json:"team_id"`
-	Date    string                    `json:"date"`
-	Players []*stats.PlayerMatchStats `json:"players"`
+	MatchID       uint                      `json:"match_id"`
+	TeamID        uint                      `json:"team_id"`
+	Lieu          string                    `json:"location"`
+	EquipeMaison  string                    `json:"home_team_name"`
+	EquipeAdverse string                    `json:"away_team_name"`
+	Date          string                    `json:"date"`
+	Players       []*stats.PlayerMatchStats `json:"players"`
 }

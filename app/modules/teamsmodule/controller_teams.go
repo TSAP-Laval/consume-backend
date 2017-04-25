@@ -168,6 +168,9 @@ func (c *TeamsController) GetTeamActions(w http.ResponseWriter, r *http.Request)
 	matchActions := MatchActions{}
 	matchActions.MatchID = uint(matchID)
 	matchActions.TeamID = uint(teamID)
+	matchActions.EquipeMaison = match.EquipeMaison.Nom
+	matchActions.EquipeAdverse = match.EquipeAdverse.Nom
+	matchActions.Lieu = match.Lieu.Nom
 	matchActions.Date = match.Date
 	players := make([]*stats.PlayerMatchStats, len(joueurs))
 	for i, m := range joueurs {
