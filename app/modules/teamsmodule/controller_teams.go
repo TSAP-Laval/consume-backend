@@ -110,17 +110,7 @@ func (c *TeamsController) GetTeamMatches(w http.ResponseWriter, r *http.Request)
 		}, http.StatusBadRequest)
 	}
 
-	seasonIDRaw := vars["seasonID"]
-
-	seasonID, err := strconv.Atoi(seasonIDRaw)
-
-	if err != nil {
-		c.SendJSON(w, core.ErrorMessage{
-			Error: fmt.Sprintf("SeasonID %s invalid", seasonIDRaw),
-		}, http.StatusBadRequest)
-	}
-
-	Matches, err := c.datasource.GetMatchesInfos(uint(teamID), uint(seasonID))
+	Matches, err := c.datasource.GetMatchesInfos(uint(teamID))
 
 	if c.HandleError(err, w) {
 		return
@@ -128,16 +118,11 @@ func (c *TeamsController) GetTeamMatches(w http.ResponseWriter, r *http.Request)
 	displayMatches := make([]MatchesDisplaySchema, len(*Matches))
 	for i, m := range *Matches {
 		displayMatches[i] = MatchesDisplaySchema{
-			ID:   m.ID,
-			Lieu: m.Lieu.Nom,
-			Date: m.Date,
-		}
-		if m.EquipeMaisonID == teamID {
-			displayMatches[i].EquipeAdverse = m.EquipeAdverse.Nom
-			displayMatches[i].Equipe = m.EquipeMaison.Nom
-		} else {
-			displayMatches[i].EquipeAdverse = m.EquipeMaison.Nom
-			displayMatches[i].Equipe = m.EquipeAdverse.Nom
+			ID:            m.ID,
+			Lieu:          m.Lieu.Nom,
+			Date:          m.Date,
+			EquipeMaison:  m.EquipeMaison.Nom,
+			EquipeAdverse: m.EquipeAdverse.Nom,
 		}
 	}
 

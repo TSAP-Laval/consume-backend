@@ -31,7 +31,7 @@ func NewTeamsModule(datasource common.IDatasource, config *core.ConsumeConfigura
 		},
 		core.Route{
 			Method:  http.MethodGet,
-			Path:    "/teams/{teamID}/season/{seasonID}/matches",
+			Path:    "/teams/{teamID}/matches",
 			Handler: kc.GetTeamMatches,
 		},
 		core.Route{
