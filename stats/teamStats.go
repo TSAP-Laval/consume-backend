@@ -46,13 +46,14 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 	metricSums := make(map[uint]float64)
 	metricData := make(map[uint]models.Metrique)
 
-	for _, m := range *metricsList {
-		metricSums[m.ID] = 0
-		metricData[m.ID] = m
-	}
-
 	// On boucle sur tous les joueurs d'une équipe.
 	for i, player := range t.Joueurs {
+
+		for _, m := range *metricsList {
+			metricSums[m.ID] = 0
+			metricData[m.ID] = m
+		}
+
 		// On boucle sur tous les matchs
 		for _, match := range *matches {
 
