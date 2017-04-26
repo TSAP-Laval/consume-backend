@@ -88,10 +88,22 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 			latestMetricsData[latestMetric.ID] = latestMetric.Value
 		}
 
+		//Get the data to compute standard.
+		standardData, err := data.GetAllGamesAllPlayerGivenSeason(seasonID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		standardResult, err := ComputeStandard(standardData, actionTypes, metricsList)
+		if err != nil {
+			return nil, err
+		}
+
 		displayMetrics := []metric{}
 
 		for k, v := range metricData {
-			displayMetrics = append(displayMetrics, metric{ID: v.ID, Name: v.Nom, Value: metricSums[k] / nbMatchs, Deviation: 1, LastMatch: latestMetricsData[k]})
+			displayMetrics = append(displayMetrics, metric{ID: v.ID, Name: v.Nom, Value: metricSums[k] / nbMatchs, Deviation: 1, LastMatch: latestMetricsData[k], Standard: standardResult[k]})
 		}
 
 		players[i] = playerSeason{
@@ -109,4 +121,45 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 	}
 
 	return &teamStats, err
+}
+
+// ComputeStandard Retourne la norme pour chacun des metriques.
+func ComputeStandard(data *common.AllGamesAllPlayerGivenSeason, pActionTypes *[]models.TypeAction, pMetricsList *[]models.Metrique) (map[uint]float64, error) {
+
+	var err error
+
+	standard := make(map[uint]float64)
+
+	for _, m := range *pMetricsList {
+		standard[m.ID] = 0
+	}
+
+	// On boucle sur tous les joueurs
+	for _, player := range data.Players {
+
+		// On boucle sur tous les matchs
+		for _, match := range data.Games {
+
+			// On calcul les métriques de tous les matchs.
+			computedMetrics, err := computeMetrics(&player, &match, pMetricsList, pActionTypes)
+
+			if err != nil {
+				return nil, err
+			}
+			// On ajoute la valeur obtenue à la liste qui sera retournée.
+			for _, m := range computedMetrics {
+				if _, ok := standard[m.ID]; ok {
+					standard[m.ID] += m.Value
+				}
+			}
+		}
+	}
+
+	var nbJoueurs = float64(len(data.Players))
+
+	for k, v := range standard {
+		standard[k] = (v / nbJoueurs)
+	}
+
+	return standard, err
 }
