@@ -110,13 +110,13 @@ func (c *TeamsController) GetTeamMatches(w http.ResponseWriter, r *http.Request)
 		}, http.StatusBadRequest)
 	}
 
-	Matches, err := c.datasource.GetMatchesInfos(uint(teamID))
+	matches, err := c.datasource.GetMatchesInfos(uint(teamID))
 
 	if c.HandleError(err, w) {
 		return
 	}
-	displayMatches := make([]MatchesDisplaySchema, len(*Matches))
-	for i, m := range *Matches {
+	displayMatches := make([]MatchesDisplaySchema, len(*matches))
+	for i, m := range *matches {
 		displayMatches[i] = MatchesDisplaySchema{
 			ID:            m.ID,
 			Lieu:          m.Lieu.Nom,
