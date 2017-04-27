@@ -61,6 +61,8 @@ func (m *MockDatasource) GetMatch(matchID uint) (*models.Partie, error) {
 	nbActions := 10
 
 	p := &models.Partie{Date: "Hello"}
+	p.EquipeMaison.Nom = "Hello"
+	p.EquipeAdverse.Nom = "Hello"
 	p.ID = 42
 
 	p.Actions = make([]models.Action, nbActions)
@@ -95,6 +97,8 @@ func (m *MockDatasource) GetPlayer(playerID uint) (*models.Joueur, error) {
 		return nil, errors.New("WOAH THERE GIRL")
 	}
 	p := &models.Joueur{}
+	p.Nom = "Hello"
+	p.Prenom = "Hello"
 	p.ID = 1337
 
 	return p, nil
@@ -122,7 +126,7 @@ func TestPlayerMatchstats(t *testing.T) {
 		}
 	})
 
-	t.Run("GetPlayerActins() returns the correct number of actions", func(t *testing.T) {
+	t.Run("GetPlayerActions() returns the correct number of actions", func(t *testing.T) {
 		mockData := MockDatasource{shouldMatchFail: false, shouldPlayerFail: false}
 
 		act, _ := GetPlayerActions(1337, 0, &mockData)
