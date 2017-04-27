@@ -32,25 +32,54 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 		return nil, err
 	}
 	// On crée un tableau de la longueur de players
-	//dans lequel on fera notre calcul de stats.
+	// dans lequel on fera notre calcul de stats.
 	players := make([]playerSeason, len(t.Joueurs))
 
+	metricsList, err := data.GetMetrics(teamID)
+	actionTypes, err := data.GetTypeActions()
+
+	if err != nil {
+		return nil, err
+	}
+
+	//Get the data to compute standard.
+	standardData, err := data.GetAllGamesAllPlayerGivenSeason(seasonID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	standardResult, err := ComputeStandard(standardData, actionTypes, metricsList)
+	if err != nil {
+		return nil, err
+	}
+
 	// Les métrics calculée.
-	var metric1, metric2, metric3 float64
+	metricSums := make(map[uint]float64)
+	metricData := make(map[uint]models.Metrique)
 
 	// On boucle sur tous les joueurs d'une équipe.
 	for i, player := range t.Joueurs {
+
+		for _, m := range *metricsList {
+			metricSums[m.ID] = 0
+			metricData[m.ID] = m
+		}
+
 		// On boucle sur tous les matchs
 		for _, match := range *matches {
 
-			m := getMetrics(&player, &match)
-			// On fait la somme des metrics:
-			//Volume de jeu.
-			metric1 += m[0].Value
-			//Indice d'efficacité.
-			metric2 += m[1].Value
-			//SCore de performance.
-			metric3 += m[2].Value
+			computedMetrics, err := computeMetrics(&player, &match, metricsList, actionTypes)
+
+			if err != nil {
+				return nil, err
+			}
+
+			for _, m := range computedMetrics {
+				if _, ok := metricSums[m.ID]; ok {
+					metricSums[m.ID] += m.Value
+				}
+			}
 		}
 
 		var latestMatch *models.Partie
@@ -60,24 +89,29 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 			return nil, err
 		}
 
-		latestMetrics := getMetrics(&player, latestMatch)
+		latestMetricsList, err := computeMetrics(&player, latestMatch, metricsList, actionTypes)
 
-		metric := []metric{
-			metric{ID: 1, Name: "Volume de Jeu", Value: metric1 / nbMatchs, Deviation: 1, LastMatch: latestMetrics[0].Value},
-			metric{ID: 2, Name: "Indice d'efficacité", Value: metric2 / nbMatchs, Deviation: 1, LastMatch: latestMetrics[1].Value},
-			metric{ID: 3, Name: "Score de performance", Value: metric3 / nbMatchs, Deviation: 1, LastMatch: latestMetrics[2].Value},
+		if err != nil {
+			return nil, err
+		}
+
+		latestMetricsData := make(map[uint]float64)
+		for _, latestMetric := range latestMetricsList {
+			latestMetricsData[latestMetric.ID] = latestMetric.Value
+		}
+
+		displayMetrics := []metric{}
+
+		for k, v := range metricData {
+			displayMetrics = append(displayMetrics, metric{ID: v.ID, Name: v.Nom, Value: metricSums[k] / nbMatchs, Deviation: 1, LastMatch: latestMetricsData[k], Standard: standardResult[k]})
 		}
 
 		players[i] = playerSeason{
 			ID:        player.ID,
 			FirstName: player.Prenom,
 			LastName:  player.Nom,
-			Metrics:   metric,
+			Metrics:   displayMetrics,
 		}
-		// Remise à zéro des metrics calculés
-		metric1 = 0
-		metric2 = 0
-		metric3 = 0
 	}
 
 	teamStats := TeamStats{

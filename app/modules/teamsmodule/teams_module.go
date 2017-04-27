@@ -29,6 +29,16 @@ func NewTeamsModule(datasource common.IDatasource, config *core.ConsumeConfigura
 			Path:    "/teams/{teamID}/map",
 			Handler: kc.GetMapParameters,
 		},
+		core.Route{
+			Method:  http.MethodGet,
+			Path:    "/teams/{teamID}/matches",
+			Handler: kc.GetTeamMatches,
+		},
+		core.Route{
+			Method:  http.MethodGet,
+			Path:    "/teams/{teamID}/matches/{matchID}/actions",
+			Handler: kc.GetTeamActions,
+		},
 	}
 
 	return &TeamsModule{routes: r}
