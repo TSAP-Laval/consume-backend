@@ -22,7 +22,10 @@ func (m *MockDatasource) GetTeam(teamID uint) (*models.Equipe, error) { return n
 func (m *MockDatasource) GetMatches(teamID uint, seasonID uint) (*[]models.Partie, error) {
 	return nil, nil
 }
-func (m *MockDatasource) GetMatchPosition(playerID uint, matchID uint) (*models.Position, error) {
+func (m *MockDatasource) GetMatchActions(teamID uint, matchID uint) (*models.Partie, error) {
+	return nil, nil
+}
+func (m *MockDatasource) GetMatchesInfos(teamID uint) (*[]models.Partie, error) {
 	return nil, nil
 }
 func (m *MockDatasource) GetPositions(playerID uint) (*[]models.Position, error) { return nil, nil }
@@ -55,6 +58,9 @@ func (m *MockDatasource) GetMatch(matchID uint) (*models.Partie, error) {
 	nbActions := 10
 
 	p := &models.Partie{Date: "Hello"}
+	p.EquipeMaison.Nom = "Hello"
+	p.EquipeAdverse.Nom = "Hello"
+	p.Lieu.Nom = "hello"
 	p.ID = 42
 
 	p.Actions = make([]models.Action, nbActions)
@@ -89,7 +95,19 @@ func (m *MockDatasource) GetPlayer(playerID uint) (*models.Joueur, error) {
 		return nil, errors.New("WOAH THERE GIRL")
 	}
 	p := &models.Joueur{}
+	p.Nom = "Hello"
+	p.Prenom = "Hello"
 	p.ID = 1337
+
+	return p, nil
+}
+
+func (m *MockDatasource) GetMatchPosition(playerID uint, matchID uint) (*models.Position, error) {
+	if m.shouldPlayerFail {
+		return nil, errors.New("WOAH THERE GIRL")
+	}
+	p := &models.Position{}
+	p.Nom = "Helllo"
 
 	return p, nil
 }
@@ -116,7 +134,7 @@ func TestPlayerMatchstats(t *testing.T) {
 		}
 	})
 
-	t.Run("GetPlayerActins() returns the correct number of actions", func(t *testing.T) {
+	t.Run("GetPlayerActions() returns the correct number of actions", func(t *testing.T) {
 		mockData := MockDatasource{shouldMatchFail: false, shouldPlayerFail: false}
 
 		act, _ := GetPlayerActions(1337, 0, &mockData)
