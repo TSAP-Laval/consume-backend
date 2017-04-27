@@ -107,7 +107,7 @@ func ComputeStandard(data *common.AllGamesAllPlayerGivenSeason, pActionTypes *[]
 		}
 	}
 
-	var nbJoueurs = float64(len(data.Players))
+	var nbJoueurs = float64(len(data.Players) * len(data.Games))
 
 	for k, v := range standard {
 		standard[k] = (v / nbJoueurs)
