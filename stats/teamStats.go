@@ -42,6 +42,18 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 		return nil, err
 	}
 
+	//Get the data to compute standard.
+	standardData, err := data.GetAllGamesAllPlayerGivenSeason(seasonID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	standardResult, err := ComputeStandard(standardData, actionTypes, metricsList)
+	if err != nil {
+		return nil, err
+	}
+
 	// Les métrics calculée.
 	metricSums := make(map[uint]float64)
 	metricData := make(map[uint]models.Metrique)
@@ -91,7 +103,7 @@ func GetTeamStats(teamID uint, seasonID uint, data common.IDatasource) (*TeamSta
 		displayMetrics := []metric{}
 
 		for k, v := range metricData {
-			displayMetrics = append(displayMetrics, metric{ID: v.ID, Name: v.Nom, Value: metricSums[k] / nbMatchs, Deviation: 1, LastMatch: latestMetricsData[k]})
+			displayMetrics = append(displayMetrics, metric{ID: v.ID, Name: v.Nom, Value: metricSums[k] / nbMatchs, Deviation: 1, LastMatch: latestMetricsData[k], Standard: standardResult[k]})
 		}
 
 		players[i] = playerSeason{

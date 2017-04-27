@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/TSAP-Laval/common"
 	"github.com/TSAP-Laval/models"
 )
 
@@ -15,9 +16,13 @@ type MockDatasource struct {
 
 // Implémentation mock de l'interface datasource... Faudrait rapetisser l'interface parce
 // que tbh ça fait long
-func (m *MockDatasource) GetCurrentSeason() (*models.Saison, error)   { return nil, nil }
-func (m *MockDatasource) GetSeasons() (*[]models.Saison, error)       { return nil, nil }
-func (m *MockDatasource) GetTeam(teamID uint) (*models.Equipe, error) { return nil, nil }
+func (m *MockDatasource) GetAllGamesAllPlayerGivenSeason(seasonID uint) (*common.AllGamesAllPlayerGivenSeason, error) {
+	return nil, nil
+}
+func (m *MockDatasource) GetAllPositions() (*[]models.Position, error) { return nil, nil }
+func (m *MockDatasource) GetCurrentSeason() (*models.Saison, error)    { return nil, nil }
+func (m *MockDatasource) GetSeasons() (*[]models.Saison, error)        { return nil, nil }
+func (m *MockDatasource) GetTeam(teamID uint) (*models.Equipe, error)  { return nil, nil }
 
 func (m *MockDatasource) GetMatches(teamID uint, seasonID uint) (*[]models.Partie, error) {
 	return nil, nil
