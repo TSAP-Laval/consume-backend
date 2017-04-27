@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"github.com/Knetic/govaluate"
+	"github.com/TSAP-Laval/common"
 	"github.com/TSAP-Laval/models"
 )
 
@@ -71,4 +72,46 @@ func computeMetrics(player *models.Joueur, match *models.Partie, metrics *[]mode
 	}
 
 	return computedMetrics, nil
+}
+
+// ComputeStandard Retourne la norme pour chacun des metriques.
+func ComputeStandard(data *common.AllGamesAllPlayerGivenSeason, pActionTypes *[]models.TypeAction, pMetricsList *[]models.Metrique) (map[uint]float64, error) {
+
+	var err error
+
+	standard := make(map[uint]float64)
+
+	for _, m := range *pMetricsList {
+		standard[m.ID] = 0
+	}
+
+	// On boucle sur tous les joueurs
+	for _, player := range data.Players {
+
+		// On boucle sur tous les matchs
+		for _, match := range data.Games {
+
+			// On calcul les métriques de tous les matchs.
+			computedMetrics, err := computeMetrics(&player, &match, pMetricsList, pActionTypes)
+
+			if err != nil {
+				return nil, err
+			}
+
+			// On ajoute la valeur obtenue à la liste qui sera retournée.
+			for _, m := range computedMetrics {
+				if _, ok := standard[m.ID]; ok {
+					standard[m.ID] += m.Value
+				}
+			}
+		}
+	}
+
+	var nbJoueurs = float64(len(data.Players))
+
+	for k, v := range standard {
+		standard[k] = (v / nbJoueurs)
+	}
+
+	return standard, err
 }
