@@ -22,9 +22,6 @@ func (m *MockDatasource) GetTeam(teamID uint) (*models.Equipe, error) { return n
 func (m *MockDatasource) GetMatches(teamID uint, seasonID uint) (*[]models.Partie, error) {
 	return nil, nil
 }
-func (m *MockDatasource) GetMatchPosition(playerID uint, matchID uint) (*models.Position, error) {
-	return nil, nil
-}
 func (m *MockDatasource) GetMatchActions(teamID uint, matchID uint) (*models.Partie, error) {
 	return nil, nil
 }
@@ -63,6 +60,7 @@ func (m *MockDatasource) GetMatch(matchID uint) (*models.Partie, error) {
 	p := &models.Partie{Date: "Hello"}
 	p.EquipeMaison.Nom = "Hello"
 	p.EquipeAdverse.Nom = "Hello"
+	p.Lieu.Nom = "hello"
 	p.ID = 42
 
 	p.Actions = make([]models.Action, nbActions)
@@ -100,6 +98,16 @@ func (m *MockDatasource) GetPlayer(playerID uint) (*models.Joueur, error) {
 	p.Nom = "Hello"
 	p.Prenom = "Hello"
 	p.ID = 1337
+
+	return p, nil
+}
+
+func (m *MockDatasource) GetMatchPosition(playerID uint, matchID uint) (*models.Position, error) {
+	if m.shouldPlayerFail {
+		return nil, errors.New("WOAH THERE GIRL")
+	}
+	p := &models.Position{}
+	p.Nom = "Helllo"
 
 	return p, nil
 }
